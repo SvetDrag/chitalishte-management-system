@@ -9,15 +9,35 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <div class="container">
         <a class="navbar-brand" href="/home">Бялата лястовица</a>
-        <div class="d-flex">
-            <a href="/users/logout" class="btn btn-danger">Изход</a>
+
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/events">Събития</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Школи</a>
+                </li>
+                <li class="nav-item" th:if="${session.user_role == 'ADMIN'}">
+                    <a class="nav-link text-warning fw-bold" href="#">Админ Панел</a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="d-flex align-items-center">
+            <span class="text-white me-3">Здравей, <b th:text="${session.first_name}"></b>!</span>
+            <a href="/users/logout" class="btn btn-danger btn-sm">Изход</a>
         </div>
     </div>
 </nav>
 
-<div class="container mt-5">
+<div class="container mt-5 text-center">
     <h2>Добре дошли в личното ви табло!</h2>
-    <p>Успешно влязохте в системата. Тук скоро ще можете да се записвате за школи и да заявявате инвентар.</p>
+    <p>Успешно влязохте в системата.</p>
+
+    <div th:if="${session.user_role == 'ADMIN'}" class="alert alert-success mt-4">
+        Вие сте влезли като <b>Администратор</b>. Имате пълни права да управлявате читалището.
+    </div>
 </div>
 </body>
 </html>

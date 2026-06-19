@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="bg" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Добави Събитие - НЧ Бялата лястовица</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container">
+        <a class="navbar-brand" href="/home">Бялата лястовица</a>
+        <div class="d-flex align-items-center">
+            <a href="/home" class="btn btn-outline-light btn-sm me-2">Към таблото</a>
+            <a href="/users/logout" class="btn btn-danger btn-sm">Изход</a>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Публикуване на ново събитие</h4>
+                </div>
+                <div class="card-body p-4">
+                    <form th:action="@{/events/add}" th:method="POST" th:object="${eventAddDTO}">
+
+                        <div class="mb-3">
+                            <label for="title" class="form-label fw-bold">Заглавие на събитието</label>
+                            <input type="text" id="title" th:field="*{title}" class="form-control" th:classappend="${#fields.hasErrors('title')} ? 'is-invalid'" placeholder="напр. Благотворителен рок концерт">
+                            <div class="invalid-feedback" th:errors="*{title}">Грешка</div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="eventDate" class="form-label fw-bold">Дата и час</label>
+                                <input type="datetime-local" id="eventDate" th:field="*{eventDate}" class="form-control" th:classappend="${#fields.hasErrors('eventDate')} ? 'is-invalid'">
+                                <div class="invalid-feedback" th:errors="*{eventDate}">Грешка</div>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="location" class="form-label fw-bold">Място на провеждане</label>
+                                <input type="text" id="location" th:field="*{location}" class="form-control" th:classappend="${#fields.hasErrors('location')} ? 'is-invalid'" placeholder="напр. площад Дулово">
+                                <div class="invalid-feedback" th:errors="*{location}">Грешка</div>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="description" class="form-label fw-bold">Описание</label>
+                            <textarea id="description" th:field="*{description}" class="form-control" rows="5" th:classappend="${#fields.hasErrors('description')} ? 'is-invalid'"></textarea>
+                            <div class="invalid-feedback" th:errors="*{description}">Грешка</div>
+                        </div>
+
+                        <button type="submit" class="btn btn-success w-100 fs-5">Създай събитие</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

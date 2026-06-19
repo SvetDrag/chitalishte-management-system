@@ -2,6 +2,7 @@ package bg.whiteswallow.manager.web;
 
 import bg.whiteswallow.manager.model.dto.user.UserLoginDTO;
 import bg.whiteswallow.manager.model.dto.user.UserRegisterDTO;
+import bg.whiteswallow.manager.model.entity.user.User;
 import bg.whiteswallow.manager.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -75,16 +76,17 @@ public class UserController {
             return "redirect:/users/login";
         }
 
-        boolean isLogged = userService.login(userLoginDTO);
+        User loggedUser = userService.login(userLoginDTO);
 
-        if (!isLogged) {
+        if (loggedUser == null) {
             redirectAttributes.addFlashAttribute("userLoginDTO", userLoginDTO);
             redirectAttributes.addFlashAttribute("badCredentials", true);
             return "redirect:/users/login";
         }
 
-
-        session.setAttribute("user_id", "LOGGED");
+        session.setAttribute("user_id", loggedUser.getId());
+        session.setAttribute("first_name", loggedUser.getFirstName());
+        session.setAttribute("user_role", loggedUser.getRole().name());
 
         return "redirect:/home";
     }

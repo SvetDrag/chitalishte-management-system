@@ -48,14 +48,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean login(UserLoginDTO userLoginDTO) {
+    public User login(UserLoginDTO userLoginDTO) {
         Optional<User> user = userRepository.findByUsername(userLoginDTO.getUsername());
 
-        if (user.isEmpty()) {
-            return false;
+        if (user.isEmpty() || !user.get().getPassword().equals(userLoginDTO.getPassword())) {
+            return null;
         }
 
-        // Забележка: Ще актуализираме проверката след добавяне на хеширането
-        return user.get().getPassword().equals(userLoginDTO.getPassword());
+        return user.get();
     }
 }

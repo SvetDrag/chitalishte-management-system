@@ -11,7 +11,7 @@ public class HomeController {
     public String index(HttpSession session) {
         //If user is logged - redirect to the Dashboard
         if (session.getAttribute("user_id") != null){
-            return "reddirect:/home";
+            return "redirect:/home";
         }
         return "index"; //if is still guest -> home page
     }

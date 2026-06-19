@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="bg" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Предстоящи събития - НЧ Бялата лястовица</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container">
+        <a class="navbar-brand" href="/home">Бялата лястовица</a>
+
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link active fw-bold" href="/events">Събития</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Школи</a>
+                </li>
+                <li class="nav-item" th:if="${session.user_role == 'ADMIN'}">
+                    <a class="nav-link text-warning fw-bold" href="/events/add">Админ Панел</a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="d-flex align-items-center">
+            <span class="text-white me-3">Здравей, <b th:text="${session.first_name}"></b>!</span>
+            <a href="/users/logout" class="btn btn-danger btn-sm">Изход</a>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0">Предстоящи събития</h2>
+
+        <a th:if="${session.user_role == 'ADMIN'}" href="/events/add" class="btn btn-success fw-bold shadow-sm">
+            + Публикувай събитие
+        </a>
+    </div>
+
+    <div th:if="${allEvents.isEmpty()}" class="alert alert-info text-center fs-5 shadow-sm">
+        В момента няма публикувани предстоящи събития.
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 col-lg-4 mb-4" th:each="event : ${allEvents}">
+            <div class="card shadow-sm h-100 border-0 border-top border-primary border-4">
+                <div class="card-body text-center">
+                    <h5 class="card-title text-primary fw-bold mb-3" th:text="${event.title}">Заглавие</h5>
+
+                    <ul class="list-unstyled text-muted text-start mb-4 bg-light p-3 rounded">
+                        <li class="mb-2">
+                            📅 <b>Дата:</b> <span th:text="${#temporals.format(event.eventDate, 'dd.MM.yyyy HH:mm')}">Дата</span>
+                        </li>
+                        <li>
+                            📍 <b>Място:</b> <span th:text="${event.location}">Локация</span>
+                        </li>
+                    </ul>
+
+                    <p class="card-text text-start" th:text="${event.description}">Описание</p>
+                    <div class="mt-3 pt-3 border-top" th:if="${session.user_role == 'ADMIN'}">
+                        <a th:href="@{/events/edit/{id}(id=${event.id})}" class="btn btn-warning btn-sm fw-bold">Редактирай</a>
+
+                        <form th:action="@{/events/delete/{id}(id=${event.id})}" th:method="POST" class="d-inline">
+                            <button type="submit" class="btn btn-danger btn-sm fw-bold" onclick="return confirm('Сигурни ли сте, че искате да изтриете това събитие?')">Изтрий</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
