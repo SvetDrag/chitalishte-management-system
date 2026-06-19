@@ -1,0 +1,61 @@
+package bg.whiteswallow.manager.service.impl;
+
+import bg.whiteswallow.manager.model.dto.user.UserLoginDTO;
+import bg.whiteswallow.manager.model.dto.user.UserRegisterDTO;
+import bg.whiteswallow.manager.model.entity.user.User;
+import bg.whiteswallow.manager.model.entity.user.UserRole;
+import bg.whiteswallow.manager.repository.UserRepository;
+import bg.whiteswallow.manager.service.UserService;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.Optional;
+
+@Service
+public class UserServiceImpl implements UserService {
+
+    private final UserRepository userRepository;
+
+    public UserServiceImpl(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    @Override
+    public boolean register(UserRegisterDTO userRegisterDTO) {
+        if (!userRegisterDTO.getPassword().equals(userRegisterDTO.getConfirmPassword())) {
+            return false;
+        }
+
+        Optional<User> existingUser = userRepository.findByUsername(userRegisterDTO.getUsername());
+        if (existingUser.isPresent()) {
+            return false;
+        }
+
+        User user = User.builder()
+                .username(userRegisterDTO.getUsername())
+                .firstName(userRegisterDTO.getFirstName())
+                .lastName(userRegisterDTO.getLastName())
+                .email(userRegisterDTO.getEmail())
+                .password(userRegisterDTO.getPassword())
+                .role(userRepository.count() == 0 ? UserRole.ADMIN : UserRole.USER)
+                .isActive(true)
+                .createdOn(LocalDateTime.now())
+                .updatedOn(LocalDateTime.now())
+                .build();
+
+        userRepository.save(user);
+        return true;
+    }
+
+    @Override
+    public boolean login(UserLoginDTO userLoginDTO) {
+        Optional<User> user = userRepository.findByUsername(userLoginDTO.getUsername());
+
+        if (user.isEmpty()) {
+            return false;
+        }
+
+        // Забележка: Ще актуализираме проверката след добавяне на хеширането
+        return user.get().getPassword().equals(userLoginDTO.getPassword());
+    }
+}
