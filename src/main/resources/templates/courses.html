@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="bg" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Школи - НЧ Бялата лястовица</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container">
+        <a class="navbar-brand" href="/home">Бялата лястовица</a>
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item"><a class="nav-link" href="/events">Събития</a></li>
+                <li class="nav-item"><a class="nav-link active fw-bold" href="/courses">Школи</a></li>
+            </ul>
+        </div>
+        <div class="d-flex align-items-center" th:if="${session.user_id != null}">
+            <span class="text-white me-3">Здравей, <b th:text="${session.first_name}"></b>!</span>
+            <a href="/users/logout" class="btn btn-danger btn-sm">Изход</a>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0">Школи и курсове</h2>
+        <a th:if="${session.user_role == 'ADMIN'}" href="/courses/add" class="btn btn-success fw-bold shadow-sm">
+            + Добави школа
+        </a>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 col-lg-4 mb-4" th:each="course : ${allCourses}">
+            <div class="card shadow-sm h-100 border-0 border-top border-success border-4">
+                <div class="card-body text-center">
+                    <h4 class="card-title text-success fw-bold mb-3" th:text="${course.name}">Име на школа</h4>
+                    <p class="fs-5">Формат: <b th:text="${course.type == T(bg.whiteswallow.manager.model.entity.course.CourseType).GROUP ? 'Групов' : 'Индивидуален'}"></b></p>
+                    <h5 class="text-muted">Такса: <span class="text-dark fw-bold" th:text="${course.pricePerLesson}">0.00</span> лв. / урок</h5>
+
+                    <div class="mt-4 pt-3 border-top" th:if="${session.user_role == 'ADMIN'}">
+                        <a th:href="@{/courses/edit/{id}(id=${course.id})}" class="btn btn-warning btn-sm fw-bold">Редактирай</a>
+                        <form th:action="@{/courses/delete/{id}(id=${course.id})}" th:method="POST" class="d-inline">
+                            <button type="submit" class="btn btn-danger btn-sm fw-bold" onclick="return confirm('Сигурни ли сте?')">Изтрий</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
