@@ -16,11 +16,11 @@ public class UserRegisterDTO {
     private String username;
 
     @NotBlank(message = "Името е задължително!")
-    @Size(min = 5, max = 30, message = "Въведете име")
+    @Size(min = 2, max = 30, message = "Въведете име")
     private String firstName;
 
     @NotBlank(message = "Фамилията е задължителна!")
-    @Size(min = 5, max = 50, message = "Въведете фамилия")
+    @Size(min = 2, max = 50, message = "Въведете фамилия")
     private String lastName;
 
     @NotBlank(message = "Имейлът е задължителен!")
