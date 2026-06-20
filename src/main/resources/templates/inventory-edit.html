@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="bg" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Редактирай Инвентар</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm border-warning">
+                <div class="card-header bg-warning text-dark">
+                    <h4 class="mb-0 fw-bold">Редактиране на предмет</h4>
+                </div>
+                <div class="card-body p-4">
+                    <form th:action="@{/inventory/edit/{id}(id=${itemId})}" th:method="POST" th:object="${inventoryEditDTO}">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Наименование</label>
+                            <input type="text" th:field="*{name}" class="form-control" th:classappend="${#fields.hasErrors('name')} ? 'is-invalid'">
+                            <div class="invalid-feedback" th:errors="*{name}"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Състояние</label>
+                            <input type="text" th:field="*{itemCondition}" class="form-control" th:classappend="${#fields.hasErrors('itemCondition')} ? 'is-invalid'">
+                            <div class="invalid-feedback" th:errors="*{itemCondition}"></div>
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label fw-bold">Статус</label>
+                            <select th:field="*{status}" class="form-select" th:classappend="${#fields.hasErrors('status')} ? 'is-invalid'">
+                                <option th:each="s : ${itemStatuses}" th:value="${s}" th:text="${s.name() == 'AVAILABLE' ? 'Наличен' : (s.name() == 'BORROWED' ? 'Зает' : 'В ремонт')}"></option>
+                            </select>
+                            <div class="invalid-feedback" th:errors="*{status}"></div>
+                        </div>
+                        <button type="submit" class="btn btn-warning w-100 fw-bold fs-5">Обнови данните</button>
+                    </form>
+                    <div class="text-center mt-3"><a href="/inventory">Отказ</a></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

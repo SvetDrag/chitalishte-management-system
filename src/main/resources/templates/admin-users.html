@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="bg" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Админ - Потребители</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+<div class="container mt-5">
+    <h2>Управление на потребители</h2>
+    <table class="table mt-4 bg-white shadow-sm">
+        <tr th:each="u : ${allUsers}">
+            <td th:text="${u.username}"></td>
+            <td th:text="${u.fullName}"></td>
+            <td th:text="${u.role}"></td>
+            <td>
+                <form th:action="@{/users/admin/delete/{id}(id=${u.id})}" th:method="POST"
+                      th:if="${u.role.name() != 'ADMIN'}">
+                    <button class="btn btn-danger btn-sm" onclick="return confirm('Изтриване?')">Изтрий</button>
+                </form>
+            </td>
+        </tr>
+    </table>
+    <a href="/home" class="btn btn-primary">Назад</a>
+</div>
+</body>
+</html>

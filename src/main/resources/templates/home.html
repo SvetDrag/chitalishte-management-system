@@ -18,8 +18,11 @@
                 <li class="nav-item">
                     <a class="nav-link" href="/courses">Школи</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/inventory">Инвентар</a>
+                </li>
                 <li class="nav-item" th:if="${session.user_role == 'ADMIN'}">
-                    <a class="nav-link text-warning fw-bold" href="#">Админ Панел</a>
+                    <a class="nav-link text-warning fw-bold" href="/admin-users">Админ Панел</a>
                 </li>
             </ul>
         </div>

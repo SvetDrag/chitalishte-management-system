@@ -4,15 +4,15 @@ import bg.whiteswallow.manager.model.dto.user.UserLoginDTO;
 import bg.whiteswallow.manager.model.dto.user.UserRegisterDTO;
 import bg.whiteswallow.manager.model.entity.user.User;
 import bg.whiteswallow.manager.service.UserService;
+import org.springframework.ui.Model;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.UUID;
 
 @Controller
 @RequestMapping("/users")
@@ -95,5 +95,19 @@ public class UserController {
     public String logout(HttpSession session) {
         session.invalidate();
         return "redirect:/";
+    }
+
+    @GetMapping("/admin/users")
+    public String listUsers(Model model, HttpSession session) {
+        if (!"ADMIN".equals(session.getAttribute("user_role"))) return "redirect:/home";
+        model.addAttribute("allUsers", userService.getAllUsers());
+        return "admin-users";
+    }
+
+    @PostMapping("/admin/delete/{id}")
+    public String deleteUser(@PathVariable UUID id, HttpSession session) {
+        if (!"ADMIN".equals(session.getAttribute("user_role"))) return "redirect:/home";
+        userService.deleteUser(id);
+        return "redirect:/users/admin/users";
     }
 }
