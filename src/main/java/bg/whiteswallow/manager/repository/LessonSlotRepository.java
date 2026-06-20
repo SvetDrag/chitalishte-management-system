@@ -16,5 +16,7 @@ public interface LessonSlotRepository extends JpaRepository<LessonSlot, UUID> {
     List<LessonSlot> findAllByCourseIdOrderByStartTimeAsc(UUID courseId);
     List<LessonSlot> findAllByStartTimeAfterOrderByStartTimeAsc(LocalDateTime time);
     List<LessonSlot> findAllByCourseIdAndStartTimeAfterOrderByStartTimeAsc(UUID courseId, java.time.LocalDateTime time);
+    List<LessonSlot> findAllByEnrolledUsersIdAndStartTimeAfterOrderByStartTimeAsc(UUID userId, java.time.LocalDateTime time);
+
 
 }

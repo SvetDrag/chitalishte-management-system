@@ -13,4 +13,5 @@ public interface LessonSlotService {
     boolean enrollUser(UUID slotId, UUID userId);
     List<LessonSlot> getUpcomingSlotsForCourse(UUID courseId);
     boolean unenrollUser(UUID slotId, UUID userId);
+    List<LessonSlot> getUserUpcomingLessons(UUID userId);
 }

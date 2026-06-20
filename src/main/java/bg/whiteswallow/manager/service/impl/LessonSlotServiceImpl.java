@@ -98,4 +98,9 @@ public class LessonSlotServiceImpl implements LessonSlotService {
         lessonSlotRepository.save(slot);
         return true;
     }
+
+    @Override
+    public List<LessonSlot> getUserUpcomingLessons(UUID userId) {
+        return lessonSlotRepository.findAllByEnrolledUsersIdAndStartTimeAfterOrderByStartTimeAsc(userId, java.time.LocalDateTime.now());
+    }
 }

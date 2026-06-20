@@ -6,24 +6,15 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body class="bg-light">
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-    <div class="container">
-        <a class="navbar-brand" href="/home">Бялата лястовица</a>
 
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/home">Бялата лястовица</a>
         <div class="collapse navbar-collapse">
             <ul class="navbar-nav me-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="/events">Събития</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/courses">Школи</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-white fw-bold" href="/schedule">📅 ГРАФИК</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/inventory">Инвентар</a>
-                </li>
+                <li class="nav-item"><a class="nav-link" href="/events">Събития</a></li>
+                <li class="nav-item"><a class="nav-link" href="/courses">Школи</a></li>
+                <li class="nav-item"><a class="nav-link" href="/inventory">Инвентар</a></li>
                 <li class="nav-item" th:if="${session.user_role == 'EMPLOYEE' or session.user_role == 'ADMIN'}">
                     <a class="nav-link text-info fw-bold" href="/employee/schedule">Панел Преподавател</a>
                 </li>
@@ -32,21 +23,110 @@
                 </li>
             </ul>
         </div>
-
         <div class="d-flex align-items-center">
             <span class="text-white me-3">Здравей, <b th:text="${session.first_name}"></b>!</span>
-            <a href="/users/logout" class="btn btn-danger btn-sm">Изход</a>
+            <a href="/users/logout" class="btn btn-danger btn-sm fw-bold">Изход</a>
         </div>
     </div>
 </nav>
 
-<div class="container mt-5 text-center">
-    <h2>Добре дошли в личното ви табло!</h2>
-    <p>Успешно влязохте в системата.</p>
+<div class="container mt-5">
 
-    <div th:if="${session.user_role == 'ADMIN'}" class="alert alert-success mt-4">
-        Вие сте влезли като <b>Администратор</b>. Имате пълни права да управлявате читалището.
+    <div th:if="${session.user_role == 'USER'}">
+        <h3 class="mb-4 text-primary">Моят профил и уроци</h3>
+
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card shadow-sm border-primary">
+                    <div class="card-header bg-primary text-white fw-bold">Моята програма (Предстоящи уроци)</div>
+                    <div class="card-body p-0">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                            <tr>
+                                <th>Школа</th>
+                                <th>Преподавател</th>
+                                <th>Дата и Час</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="lesson : ${myLessons}">
+                                <td class="fw-bold" th:text="${lesson.course.name}"></td>
+                                <td th:text="${lesson.course.instructor.firstName + ' ' + lesson.course.instructor.lastName}"></td>
+                                <td><span class="badge bg-success fs-6" th:text="${#temporals.format(lesson.startTime, 'dd.MM.yyyy HH:mm')}"></span></td>
+                            </tr>
+                            <tr th:if="${myLessons.isEmpty()}">
+                                <td colspan="3" class="text-center text-muted p-4">
+                                    Нямате предстоящи уроци. <br>
+                                    <a href="/courses" class="btn btn-primary mt-2">Разгледайте школите</a>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card shadow-sm">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Дигитално читалище</h5>
+                        <p class="text-muted">Запазвайте места за репетиции и следете инвентара си лесно и удобно.</p>
+                        <a href="/events" class="btn btn-outline-primary w-100">Виж културния календар</a>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+
+    <div th:if="${session.user_role == 'EMPLOYEE'}">
+        <h3 class="mb-4 text-info">Работно табло - Преподавател</h3>
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <div class="card bg-info text-white shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold">Управление на графика</h5>
+                        <p>Имате общо <b th:text="${mySchedule.size()}"></b> предстоящи заявени часове в системата.</p>
+                        <a href="/employee/schedule" class="btn btn-light fw-bold">Отвори детайлния график</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:if="${session.user_role == 'ADMIN'}">
+        <h3 class="mb-4 text-warning">Контролен център (Админ)</h3>
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="card shadow-sm border-warning h-100">
+                    <div class="card-body text-center">
+                        <h5 class="fw-bold">Потребители и Роли</h5>
+                        <p class="text-muted small">Управление на достъпа и назначаване на преподаватели.</p>
+                        <a href="/users/admin/users" class="btn btn-warning w-100 fw-bold">Управление</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card shadow-sm border-success h-100">
+                    <div class="card-body text-center">
+                        <h5 class="fw-bold">Събития и Школи</h5>
+                        <p class="text-muted small">Добавяне на нови курсове и културни мероприятия.</p>
+                        <a href="/events/add" class="btn btn-outline-success btn-sm mb-2 w-100">+ Ново събитие</a>
+                        <a href="/courses/add" class="btn btn-outline-success btn-sm w-100">+ Нова школа</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card shadow-sm border-info h-100">
+                    <div class="card-body text-center">
+                        <h5 class="fw-bold">Складов Инвентар</h5>
+                        <p class="text-muted small">Отдаване на носии и инструменти на членове на читалището.</p>
+                        <a href="/inventory" class="btn btn-info text-white w-100 fw-bold">Отвори склада</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
 </body>
 </html>
