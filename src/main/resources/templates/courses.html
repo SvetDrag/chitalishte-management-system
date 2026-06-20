@@ -35,8 +35,17 @@
             <div class="card shadow-sm h-100 border-0 border-top border-success border-4">
                 <div class="card-body text-center">
                     <h4 class="card-title text-success fw-bold mb-3" th:text="${course.name}">Име на школа</h4>
-                    <p class="fs-5">Формат: <b th:text="${course.type == T(bg.whiteswallow.manager.model.entity.course.CourseType).GROUP ? 'Групов' : 'Индивидуален'}"></b></p>
-                    <h5 class="text-muted">Такса: <span class="text-dark fw-bold" th:text="${course.pricePerLesson}">0.00</span> лв. / урок</h5>
+                    <p class="fs-6 text-muted mb-1">
+                        Води:
+                        <b class="text-dark" th:if="${course.instructor != null}" th:text="${course.instructor.firstName + ' ' + course.instructor.lastName}"></b>
+                        <b class="text-danger" th:if="${course.instructor == null}">Няма назначен</b>
+                    </p>
+                    <p class="fs-6 mb-1">Формат: <b th:text="${course.type == T(bg.whiteswallow.manager.model.entity.course.CourseType).GROUP ? 'Групов' : 'Индивидуален'}"></b></p>
+                    <h5 class="text-muted mt-3">Такса: <span class="text-dark fw-bold" th:text="${course.pricePerLesson}">0.00</span> лв. / урок</h5>
+
+                    <div class="mt-3">
+                        <a th:href="@{/courses/{id}/schedule(id=${course.id})}" class="btn btn-primary w-100 fw-bold">Виж свободните часове</a>
+                    </div>
 
                     <div class="mt-4 pt-3 border-top" th:if="${session.user_role == 'ADMIN'}">
                         <a th:href="@{/courses/edit/{id}(id=${course.id})}" class="btn btn-warning btn-sm fw-bold">Редактирай</a>

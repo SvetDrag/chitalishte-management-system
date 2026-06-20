@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="bg" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>График - НЧ Бялата лястовица</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container">
+        <a class="navbar-brand" href="/home">Бялата лястовица</a>
+        <div class="d-flex align-items-center">
+            <a href="/courses" class="btn btn-outline-light btn-sm me-3">Назад към всички школи</a>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-5">
+    <h2 class="mb-2 fw-bold text-primary" th:text="${course.name}">Име на школата</h2>
+    <h5 class="mb-4 text-muted">
+        Преподавател:
+        <span th:if="${course.instructor != null}" th:text="${course.instructor.firstName + ' ' + course.instructor.lastName}"></span>
+        <span th:if="${course.instructor == null}" class="text-danger">Няма назначен</span>
+    </h5>
+
+    <div th:if="${successMsg}" class="alert alert-success fw-bold text-center" th:text="${successMsg}"></div>
+    <div th:if="${errorMsg}" class="alert alert-danger fw-bold text-center" th:text="${errorMsg}"></div>
+
+    <div class="row">
+        <div class="col-md-6 col-lg-4 mb-4" th:each="slot : ${upcomingSlots}">
+            <div class="card shadow-sm h-100 border-0 border-start border-primary border-4">
+                <div class="card-body">
+                    <h5 class="card-title text-dark mb-3">
+                        📅 <b th:text="${#temporals.format(slot.startTime, 'dd.MM.yyyy HH:mm')}"></b> ч.
+                    </h5>
+
+                    <div class="d-flex justify-content-between align-items-center mb-3 p-2 bg-light rounded">
+                        <span>Свободни места:</span>
+                        <span class="fw-bold fs-5" th:classappend="${slot.enrolledUsers.size() >= slot.maxCapacity ? 'text-danger' : 'text-success'}">
+                            <span th:text="${slot.maxCapacity - slot.enrolledUsers.size()}"></span> / <span th:text="${slot.maxCapacity}"></span>
+                        </span>
+                    </div>
+
+                    <form th:action="@{/schedule/unenroll/{id}(id=${slot.id})}" th:method="POST"
+                          th:if="${slot.hasUser(session.user_id)}">
+                        <button type="submit" class="btn btn-outline-danger w-100 fw-bold">Откажи участие</button>
+                    </form>
+
+                    <form th:action="@{/schedule/enroll/{id}(id=${slot.id})}" th:method="POST"
+                          th:if="${session.user_id != null and !slot.hasUser(session.user_id) and slot.enrolledUsers.size() < slot.maxCapacity and session.user_id != (course.instructor != null ? course.instructor.id : null)}">
+                        <button type="submit" class="btn btn-primary w-100 fw-bold">Запиши се (<span th:text="${course.pricePerLesson}"></span> лв.)</button>
+                    </form>
+
+                    <form th:action="@{/schedule/enroll/{id}(id=${slot.id})}" th:method="POST"
+                          th:if="${session.user_id == null and slot.enrolledUsers.size() < slot.maxCapacity}">
+                        <button type="submit" class="btn btn-primary w-100 fw-bold">Запиши се (<span th:text="${course.pricePerLesson}"></span> лв.)</button>
+                    </form>
+
+                    <button th:if="${session.user_id == (course.instructor != null ? course.instructor.id : null)}" class="btn btn-secondary w-100 fw-bold" disabled>Това е вашият час</button>
+
+                    <button th:if="${!slot.hasUser(session.user_id) and slot.enrolledUsers.size() >= slot.maxCapacity and session.user_id != (course.instructor != null ? course.instructor.id : null)}" class="btn btn-danger w-100 fw-bold" disabled>Пълна група</button></div>
+            </div>
+        </div>
+
+        <div th:if="${upcomingSlots.isEmpty()}" class="col-12 mt-4 alert alert-secondary text-center">
+            <h5>Все още няма обявени дати за тази школа.</h5>
+        </div>
+    </div>
+</div>
+</body>
+</html>

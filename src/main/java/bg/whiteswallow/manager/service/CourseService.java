@@ -13,4 +13,8 @@ public interface CourseService {
     void deleteCourse(UUID id);
     CourseAddDTO getCourseForEdit(UUID id);
     void updateCourse(UUID id, CourseAddDTO courseAddDTO);
+    List<Course> getCoursesByInstructor(UUID instructorId);
+    Course getCourseById(UUID id);
+
+
 }

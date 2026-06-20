@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="bg" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>График на школите - НЧ Бялата лястовица</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container">
+        <a class="navbar-brand" href="/home">Бялата лястовица</a>
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item"><a class="nav-link" href="/events">Събития</a></li>
+                <li class="nav-item"><a class="nav-link" href="/courses">Школи</a></li>
+                <li class="nav-item"><a class="nav-link active fw-bold" href="/schedule">График и Записване</a></li>
+            </ul>
+        </div>
+        <div class="d-flex align-items-center" th:if="${session.user_id != null}">
+            <span class="text-white me-3">Здравей, <b th:text="${session.first_name}"></b>!</span>
+            <a href="/users/logout" class="btn btn-danger btn-sm">Изход</a>
+        </div>
+        <div class="d-flex align-items-center" th:if="${session.user_id == null}">
+            <a href="/users/login" class="btn btn-light btn-sm">Вход за записване</a>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-5">
+    <h2 class="mb-4 fw-bold text-primary">График на предстоящите уроци</h2>
+
+    <div th:if="${successMsg}" class="alert alert-success fw-bold text-center" th:text="${successMsg}"></div>
+    <div th:if="${errorMsg}" class="alert alert-danger fw-bold text-center" th:text="${errorMsg}"></div>
+
+    <div class="row">
+        <div class="col-md-6 col-lg-4 mb-4" th:each="slot : ${upcomingSlots}">
+            <div class="card shadow-sm h-100 border-0 border-start border-primary border-4">
+                <div class="card-body">
+                    <h5 class="card-title text-primary fw-bold" th:text="${slot.course.name}">Урок по...</h5>
+                    <p class="mb-1 text-muted">
+                        Преподавател: <b class="text-dark" th:text="${slot.course.instructor.firstName + ' ' + slot.course.instructor.lastName}"></b>
+                    </p>
+                    <p class="mb-3 text-muted">
+                        Дата: <b class="text-dark" th:text="${#temporals.format(slot.startTime, 'dd.MM.yyyy HH:mm')}"></b> ч.
+                    </p>
+
+                    <div class="d-flex justify-content-between align-items-center mb-3 p-2 bg-light rounded">
+                        <span>Свободни места:</span>
+                        <span class="fw-bold fs-5" th:classappend="${slot.enrolledUsers.size() >= slot.maxCapacity ? 'text-danger' : 'text-success'}">
+                            <span th:text="${slot.maxCapacity - slot.enrolledUsers.size()}"></span> / <span th:text="${slot.maxCapacity}"></span>
+                        </span>
+                    </div>
+
+                    <form th:action="@{/schedule/enroll/{id}(id=${slot.id})}" th:method="POST"
+                          th:if="${slot.enrolledUsers.size() < slot.maxCapacity and session.user_id != slot.course.instructor.id}">
+                        <button type="submit" class="btn btn-primary w-100 fw-bold">Запиши се (<span th:text="${slot.course.pricePerLesson}"></span> лв.)</button>
+                    </form>
+
+                    <button th:if="${session.user_id == slot.course.instructor.id}" class="btn btn-secondary w-100 fw-bold" disabled>Това е вашият час</button>
+
+                    <button th:if="${slot.enrolledUsers.size() >= slot.maxCapacity and session.user_id != slot.course.instructor.id}" class="btn btn-danger w-100 fw-bold" disabled>Няма свободни места</button>
+
+                    <button th:if="${slot.enrolledUsers.size() >= slot.maxCapacity}" class="btn btn-danger w-100 fw-bold" disabled>Няма свободни места</button>
+                </div>
+            </div>
+        </div>
+
+        <div th:if="${upcomingSlots.isEmpty()}" class="col-12 text-center text-muted mt-5">
+            <h4>В момента няма обявени предстоящи часове.</h4>
+        </div>
+    </div>
+</div>
+</body>
+</html>

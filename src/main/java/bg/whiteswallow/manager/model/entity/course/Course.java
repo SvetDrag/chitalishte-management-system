@@ -1,5 +1,6 @@
 package bg.whiteswallow.manager.model.entity.course;
 
+import bg.whiteswallow.manager.model.entity.user.User;
 import jakarta.persistence.*;
 import lombok.*;
 import java.math.BigDecimal;
@@ -27,4 +28,8 @@ public class Course {
 
     @Column(nullable = false)
     private BigDecimal pricePerLesson;
+
+    @ManyToOne
+    @JoinColumn(name = "instructor_id")
+    private User instructor;
 }

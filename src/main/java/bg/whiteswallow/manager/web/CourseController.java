@@ -2,7 +2,10 @@ package bg.whiteswallow.manager.web;
 
 import bg.whiteswallow.manager.model.dto.course.CourseAddDTO;
 import bg.whiteswallow.manager.model.entity.course.CourseType;
+import bg.whiteswallow.manager.model.entity.user.User;
 import bg.whiteswallow.manager.service.CourseService;
+import bg.whiteswallow.manager.service.LessonSlotService;
+import bg.whiteswallow.manager.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
@@ -11,6 +14,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.List;
 import java.util.UUID;;
 
 @Controller
@@ -18,9 +22,19 @@ import java.util.UUID;;
 public class CourseController {
 
     private final CourseService courseService;
+    private final UserService userService;
+    private final LessonSlotService lessonSlotService;
 
-    public CourseController(CourseService courseService){
+    public CourseController(CourseService courseService, UserService userService, LessonSlotService lessonSlotService) {
         this.courseService = courseService;
+        this.userService = userService;
+        this.lessonSlotService = lessonSlotService;
+    }
+
+
+    @ModelAttribute("employees")
+    public List<User> employees() {
+        return userService.getAllEmployees();
     }
 
     @ModelAttribute("courseAddDTO")
@@ -95,5 +109,12 @@ public class CourseController {
 
         courseService.updateCourse(id, courseEditDTO);
         return "redirect:/courses";
+    }
+
+    @GetMapping("/{id}/schedule")
+    public String courseSchedule(@PathVariable UUID id, Model model) {
+        model.addAttribute("course", courseService.getCourseById(id));
+        model.addAttribute("upcomingSlots", lessonSlotService.getUpcomingSlotsForCourse(id));
+        return "course-schedule"; // Новият HTML файл
     }
 }

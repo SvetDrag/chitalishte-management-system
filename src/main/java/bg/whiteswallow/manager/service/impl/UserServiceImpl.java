@@ -69,4 +69,16 @@ public class UserServiceImpl implements UserService {
     public void deleteUser(UUID id) {
         userRepository.deleteById(id);
     }
+
+    @Override
+    public void changeUserRole(UUID id, UserRole newRole) {
+        User user = userRepository.findById(id).orElseThrow();
+        user.setRole(newRole);
+        userRepository.save(user);
+    }
+
+    @Override
+    public List<User> getAllEmployees() {
+        return userRepository.findAllByRole(UserRole.EMPLOYEE);
+    }
 }

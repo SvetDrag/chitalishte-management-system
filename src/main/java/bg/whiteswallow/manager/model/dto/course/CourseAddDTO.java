@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -23,4 +24,7 @@ public class CourseAddDTO {
     @NotNull(message = "Въведете цена на урок!")
     @Positive(message = "Цената трябва да е положителна")
     private BigDecimal pricePerLesson;
+
+    @NotNull(message = "Моля, изберете преподавател!")
+    private UUID instructorId;
 }

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="bg" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Работно табло - Преподавател</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+<nav class="navbar navbar-expand-lg navbar-dark bg-secondary">
+    <div class="container">
+        <a class="navbar-brand" href="/home">Панел на Преподавателя</a>
+        <div class="d-flex align-items-center">
+            <a href="/home" class="btn btn-outline-light btn-sm me-3">Към главното табло</a>
+            <span class="text-white me-3">Здравей, <b th:text="${session.first_name}"></b></span>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <div class="card shadow-sm border-secondary border-top border-4">
+                <div class="card-body">
+                    <h5 class="card-title fw-bold text-secondary mb-4">Отвори нов час</h5>
+
+                    <div th:if="${myCourses.isEmpty()}" class="alert alert-warning">
+                        Все още нямате назначени школи. Свържете се с администратор.
+                    </div>
+
+                    <form th:if="${!myCourses.isEmpty()}" th:action="@{/employee/schedule/add}" th:method="POST" th:object="${lessonSlotAddDTO}">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Изберете школа</label>
+                            <select th:field="*{courseId}" class="form-select" th:classappend="${#fields.hasErrors('courseId')} ? 'is-invalid'">
+                                <option value="" disabled selected>Изберете...</option>
+                                <option th:each="c : ${myCourses}" th:value="${c.id}" th:text="${c.name}"></option>
+                            </select>
+                            <div class="invalid-feedback" th:errors="*{courseId}"></div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Дата и час на започване</label>
+                            <input type="datetime-local" th:field="*{startTime}" class="form-control" th:classappend="${#fields.hasErrors('startTime')} ? 'is-invalid'">
+                            <div class="invalid-feedback" th:errors="*{startTime}"></div>
+                        </div>
+
+                        <button type="submit" class="btn btn-secondary w-100 fw-bold">Добави в графика</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <h4 class="mb-3 fw-bold">Предстоящи часове</h4>
+            <div class="table-responsive bg-white rounded shadow-sm p-3">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                    <tr>
+                        <th>Школа</th>
+                        <th>Дата и час</th>
+                        <th>Записани хора</th>
+                        <th>Статус</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="slot : ${mySchedule}">
+                        <td class="fw-bold text-primary" th:text="${slot.course.name}"></td>
+                        <td th:text="${#temporals.format(slot.startTime, 'dd.MM.yyyy HH:mm')}"></td>
+
+                        <td>
+                            <div>
+                                <span class="fw-bold fs-5" th:text="${slot.enrolledUsers.size()}">0</span> / <span th:text="${slot.maxCapacity}"></span>
+                            </div>
+                            <ul class="list-unstyled mb-0 mt-2 border-top pt-2" th:if="${!slot.enrolledUsers.isEmpty()}">
+                                <li th:each="u : ${slot.enrolledUsers}" class="small text-muted fw-bold">
+                                    👤 <span th:text="${u.firstName + ' ' + u.lastName}"></span>
+                                </li>
+                            </ul>
+                        </td>
+
+                        <td>
+                                <span class="badge rounded-pill"
+                                      th:classappend="${slot.enrolledUsers.size() >= slot.maxCapacity ? 'bg-danger' : 'bg-success'}"
+                                      th:text="${slot.enrolledUsers.size() >= slot.maxCapacity ? 'Запълнен' : 'Свободни места'}">
+                                </span>
+                        </td>
+                    </tr>
+                    <tr th:if="${mySchedule.isEmpty()}">
+                        <td colspan="4" class="text-center text-muted">Нямате обявени часове в графика.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

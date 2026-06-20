@@ -3,6 +3,7 @@ package bg.whiteswallow.manager.web;
 import bg.whiteswallow.manager.model.dto.user.UserLoginDTO;
 import bg.whiteswallow.manager.model.dto.user.UserRegisterDTO;
 import bg.whiteswallow.manager.model.entity.user.User;
+import bg.whiteswallow.manager.model.entity.user.UserRole;
 import bg.whiteswallow.manager.service.UserService;
 import org.springframework.ui.Model;
 import jakarta.servlet.http.HttpSession;
@@ -108,6 +109,25 @@ public class UserController {
     public String deleteUser(@PathVariable UUID id, HttpSession session) {
         if (!"ADMIN".equals(session.getAttribute("user_role"))) return "redirect:/home";
         userService.deleteUser(id);
+        return "redirect:/users/admin/users";
+    }
+
+    @PostMapping("/admin/role/{id}")
+    public String changeRole(@PathVariable UUID id,
+                             @RequestParam("newRole") UserRole newRole,
+                             HttpSession session) {
+        // Само админ може да сменя роли
+        if (!"ADMIN".equals(session.getAttribute("user_role"))) {
+            return "redirect:/home";
+        }
+
+        // Защита: не позволяваме на админа да смени собствената си роля
+        UUID loggedUserId = (UUID) session.getAttribute("user_id");
+        if (loggedUserId.equals(id)) {
+            return "redirect:/users/admin/users";
+        }
+
+        userService.changeUserRole(id, newRole);
         return "redirect:/users/admin/users";
     }
 }

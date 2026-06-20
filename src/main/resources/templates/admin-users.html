@@ -41,10 +41,20 @@
                               th:text="${u.role.name()}">
                         </span>
                 </td>
-                <td>
+                <td class="d-flex gap-2">
+                    <form th:action="@{/users/admin/role/{id}(id=${u.id})}" th:method="POST"
+                          th:if="${u.role.name() != 'ADMIN'}" class="d-flex align-items-center gap-2">
+                        <select name="newRole" class="form-select form-select-sm" style="width: auto;">
+                            <option value="USER" th:selected="${u.role.name() == 'USER'}">USER</option>
+                            <option value="EMPLOYEE" th:selected="${u.role.name() == 'EMPLOYEE'}">EMPLOYEE</option>
+                            <option value="ADMIN" th:selected="${u.role.name() == 'ADMIN'}">ADMIN</option>
+                        </select>
+                        <button type="submit" class="btn btn-primary btn-sm fw-bold">Запази</button>
+                    </form>
+
                     <form th:action="@{/users/admin/delete/{id}(id=${u.id})}" th:method="POST"
-                          th:if="${u.role.name() != 'ADMIN'}" class="d-inline">
-                        <button class="btn btn-danger btn-sm fw-bold" onclick="return confirm('Сигурни ли сте, че искате да изтриете този потребител?')">Изтрий</button>
+                          th:if="${u.role.name() != 'ADMIN'}">
+                        <button class="btn btn-danger btn-sm fw-bold" onclick="return confirm('Изтриване на този потребител?')">Изтрий</button>
                     </form>
                 </td>
             </tr>
