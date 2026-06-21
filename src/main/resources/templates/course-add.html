@@ -37,7 +37,7 @@
                             <div class="invalid-feedback" th:errors="*{instructorId}"></div>
                         </div>
                         <div class="mb-4">
-                            <label class="form-label fw-bold">Цена за едно посещение (лв.)</label>
+                            <label class="form-label fw-bold">Цена за едно посещение (€)</label>
                             <input type="number" step="0.01" th:field="*{pricePerLesson}" class="form-control" th:classappend="${#fields.hasErrors('pricePerLesson')} ? 'is-invalid'">
                             <div class="invalid-feedback" th:errors="*{pricePerLesson}"></div>
                         </div>

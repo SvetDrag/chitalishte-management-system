@@ -83,7 +83,7 @@
                                       th:text="${slot.enrolledUsers.size() >= slot.maxCapacity ? 'Запълнен' : 'Свободни места'}">
                                 </span>
 
-                            <a th:if="${!slot.enrolledUsers.isEmpty()}" th:href="@{/employee/schedule/report/{id}(id=${slot.id})}" class="btn btn-sm btn-outline-primary fw-bold w-100">📋 Отчети</a>
+                            <a th:if="${!slot.enrolledUsers.isEmpty()}" th:href="@{/employee/schedule/report/{id}(id=${slot.id})}" class="btn btn-sm btn-outline-primary fw-bold w-100">📋 Дневник</a>
                         </td>
                     </tr>
                     <tr th:if="${mySchedule.isEmpty()}">

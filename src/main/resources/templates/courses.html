@@ -27,7 +27,7 @@
                         <b class="text-danger" th:if="${course.instructor == null}">Няма назначен</b>
                     </p>
                     <p class="fs-6 mb-1">Формат: <b th:text="${course.type == T(bg.whiteswallow.manager.model.entity.course.CourseType).GROUP ? 'Групов' : 'Индивидуален'}"></b></p>
-                    <h5 class="text-muted mt-3">Такса: <span class="text-dark fw-bold" th:text="${course.pricePerLesson}">0.00</span> лв. / урок</h5>
+                    <h5 class="text-muted mt-3">Такса: <span class="text-dark fw-bold" th:text="${course.pricePerLesson}">0.00</span> € / урок</h5>
 
                     <div class="mt-3">
                         <a th:href="@{/courses/{id}/schedule(id=${course.id})}" class="btn btn-primary w-100 fw-bold">Виж свободните часове</a>
