@@ -10,4 +10,7 @@ import java.util.UUID;
 @Repository
 public interface LessonAttendanceRepository extends JpaRepository<LessonAttendance, UUID> {
     List<LessonAttendance> findAllByUserId(UUID userId);
+    boolean existsByUserIdAndLessonSlotId(UUID userId, UUID lessonSlotId);
+    List<LessonAttendance> findAllByLessonSlotId(UUID lessonSlotId);
 }
+

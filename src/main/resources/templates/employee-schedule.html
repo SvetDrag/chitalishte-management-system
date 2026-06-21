@@ -78,10 +78,12 @@
                         </td>
 
                         <td>
-                                <span class="badge rounded-pill"
+                                <span class="badge rounded-pill mb-2 d-block"
                                       th:classappend="${slot.enrolledUsers.size() >= slot.maxCapacity ? 'bg-danger' : 'bg-success'}"
                                       th:text="${slot.enrolledUsers.size() >= slot.maxCapacity ? 'Запълнен' : 'Свободни места'}">
                                 </span>
+
+                            <a th:if="${!slot.enrolledUsers.isEmpty()}" th:href="@{/employee/schedule/report/{id}(id=${slot.id})}" class="btn btn-sm btn-outline-primary fw-bold w-100">📋 Отчети</a>
                         </td>
                     </tr>
                     <tr th:if="${mySchedule.isEmpty()}">

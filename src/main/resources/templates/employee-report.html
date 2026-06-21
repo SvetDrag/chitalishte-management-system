@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="bg" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Присъствия - НЧ Бялата лястовица</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<nav class="navbar navbar-dark bg-secondary shadow-sm">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/employee/schedule">⬅ Назад към Графика</a>
+    </div>
+</nav>
+
+<div class="container mt-5">
+    <h3 class="text-primary fw-bold mb-1" th:text="${slot.course.name}">Име на школа</h3>
+    <h6 class="text-muted mb-4">Дата на урока: <span th:text="${#temporals.format(slot.startTime, 'dd.MM.yyyy HH:mm')}"></span> ч.</h6>
+
+    <div class="card shadow-sm border-warning mb-4">
+        <div class="card-header bg-warning text-dark fw-bold fs-5">
+            📋 Списък на записалите се
+        </div>
+        <div class="card-body p-0">
+            <table class="table table-hover mb-0 align-middle">
+                <tbody>
+                <tr th:each="u : ${pendingUsers}">
+                    <td class="fw-bold fs-5 w-50 ps-4">👤 <span th:text="${u.firstName + ' ' + u.lastName}"></span></td>
+                    <td class="pe-4">
+                        <form th:action="@{/employee/schedule/report/{slotId}/user/{userId}(slotId=${slot.id}, userId=${u.id})}" th:method="POST" class="d-flex align-items-center justify-content-end gap-3">
+                            <div class="form-check form-switch fs-5 mb-0">
+                                <input class="form-check-input" type="checkbox" name="isPaid" value="true" th:id="'paid-' + ${u.id}" checked>
+                                <label class="form-check-label text-success fw-bold" th:for="'paid-' + ${u.id}">Платил такса</label>
+                            </div>
+                            <button type="submit" class="btn btn-primary fw-bold">Присъствал</button>
+                        </form>
+                    </td>
+                </tr>
+                <tr th:if="${pendingUsers.isEmpty()}">
+                    <td colspan="2" class="text-center text-muted p-4 fs-5">Няма участници за отбелязване в момента.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-success">
+        <div class="card-header bg-success text-white fw-bold fs-5">
+            ✅ Списък на присъствали
+        </div>
+        <div class="card-body p-0">
+            <table class="table table-hover mb-0 align-middle">
+                <thead class="table-light">
+                <tr>
+                    <th class="ps-4">Име</th>
+                    <th>Статус такса</th>
+                    <th class="text-end pe-4">Корекции</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="attendance : ${reportedAttendances}">
+                    <td class="fw-bold ps-4 text-muted">
+                        ✓ <span th:text="${attendance.user.firstName + ' ' + attendance.user.lastName}"></span>
+                    </td>
+
+                    <td>
+                        <span th:if="${attendance.isPaid}" class="badge bg-success fs-6">Платено</span>
+                        <span th:if="${!attendance.isPaid}" class="badge bg-danger fs-6">Неплатено</span>
+                    </td>
+
+                    <td class="text-end pe-4">
+                        <div class="d-flex justify-content-end gap-2">
+                            <form th:action="@{/employee/schedule/report/{slotId}/attendance/{attId}/toggle(slotId=${slot.id}, attId=${attendance.id})}" th:method="POST">
+                                <button type="submit" class="btn btn-sm btn-outline-secondary fw-bold" title="Смени статуса на плащане">Смени такса</button>
+                            </form>
+
+                            <form th:action="@{/employee/schedule/report/{slotId}/attendance/{attId}/delete(slotId=${slot.id}, attId=${attendance.id})}" th:method="POST">
+                                <button type="submit" class="btn btn-sm btn-outline-danger fw-bold" title="Връща участника в горния списък">Върни горе</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                <tr th:if="${reportedAttendances.isEmpty()}">
+                    <td colspan="3" class="text-center text-muted p-4 fs-6">Все още няма отбелязани присъствали участници.</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+</body>
+</html>

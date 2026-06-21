@@ -30,4 +30,8 @@ public class LessonAttendance {
 
     @Column(nullable = false)
     private boolean isPaid;
+
+    @ManyToOne
+    @JoinColumn(name = "lesson_slot_id")
+    private LessonSlot lessonSlot;
 }
