@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="bg" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<nav th:fragment="navigation(activePage)" class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm py-2">
+    <div class="container">
+        <a class="navbar-brand fw-bold fs-4" href="/home">НЧ "Бялата лястовица - 2018"</a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto align-items-center gap-2">
+
+                <li class="nav-item">
+                    <a class="nav-link fs-6 transition-all"
+                       th:classappend="${activePage == 'events' ? 'text-white fw-bold border-bottom border-2 border-white' : 'text-white opacity-75'}"
+                       href="/events">Събития</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link fs-6 transition-all"
+                       th:classappend="${activePage == 'courses' ? 'text-white fw-bold border-bottom border-2 border-white' : 'text-white opacity-75'}"
+                       href="/courses">Школи</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link fs-6 transition-all"
+                       th:classappend="${activePage == 'inventory' ? 'text-white fw-bold border-bottom border-2 border-white' : 'text-white opacity-75'}"
+                       href="/inventory">Инвентар</a>
+                </li>
+
+                <li class="nav-item" th:if="${session.user_role == 'EMPLOYEE' or session.user_role == 'ADMIN'}">
+                    <a class="nav-link fw-bold bg-light text-primary rounded-pill px-3 ms-lg-3 shadow-sm"
+                       href="/employee/schedule">👨‍🏫 Панел Преподавател</a>
+                </li>
+
+                <li class="nav-item" th:if="${session.user_role == 'ADMIN'}">
+                    <a class="nav-link fw-bold bg-warning text-dark rounded-pill px-3 ms-lg-2 shadow-sm"
+                       href="/users/admin/users">⚙️ Админ Панел</a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="d-flex align-items-center">
+            <span class="text-white me-3 fs-6">Здравей, <b th:text="${session.first_name}"></b>!</span>
+            <a href="/users/logout" class="btn btn-danger btn-sm fw-bold rounded-pill px-3 shadow-sm">Изход</a>
+        </div>
+    </div>
+</nav>
+
+</body>
+</html>

@@ -7,28 +7,7 @@
 </head>
 <body class="bg-light">
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm">
-    <div class="container">
-        <a class="navbar-brand fw-bold" href="/home">Бялата лястовица</a>
-        <div class="collapse navbar-collapse">
-            <ul class="navbar-nav me-auto">
-                <li class="nav-item"><a class="nav-link" href="/events">Събития</a></li>
-                <li class="nav-item"><a class="nav-link" href="/courses">Школи</a></li>
-                <li class="nav-item"><a class="nav-link" href="/inventory">Инвентар</a></li>
-                <li class="nav-item" th:if="${session.user_role == 'EMPLOYEE' or session.user_role == 'ADMIN'}">
-                    <a class="nav-link text-info fw-bold" href="/employee/schedule">Панел Преподавател</a>
-                </li>
-                <li class="nav-item" th:if="${session.user_role == 'ADMIN'}">
-                    <a class="nav-link text-warning fw-bold" href="/users/admin/users">Админ Панел</a>
-                </li>
-            </ul>
-        </div>
-        <div class="d-flex align-items-center">
-            <span class="text-white me-3">Здравей, <b th:text="${session.first_name}"></b>!</span>
-            <a href="/users/logout" class="btn btn-danger btn-sm fw-bold">Изход</a>
-        </div>
-    </div>
-</nav>
+<nav th:replace="~{fragments/navbar :: navigation('home')}"></nav>
 
 <div class="container mt-5">
 
