@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -60,5 +61,10 @@ public class LessonAttendanceServiceImpl implements LessonAttendanceService {
 
             attendance.setPaid(!attendance.isPaid());
         attendanceRepository.save(attendance);
+    }
+
+    @Override
+    public List<LessonAttendance> getAllAttendances() {
+        return attendanceRepository.findAll();
     }
 }

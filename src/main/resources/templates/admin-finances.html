@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="bg" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Финансов отчет - Администрация</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<nav class="navbar navbar-dark bg-dark shadow-sm">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/home">Бялата лястовица - Финанси</a>
+        <a href="/home" class="btn btn-outline-light btn-sm">Назад към таблото</a>
+    </div>
+</nav>
+
+<div class="container mt-5">
+    <h2 class="mb-4 fw-bold text-dark">Финансов отчет на читалището</h2>
+
+    <div class="row mb-5">
+        <div class="col-md-6 mb-3">
+            <div class="card bg-success text-white shadow-sm border-0">
+                <div class="card-body p-4">
+                    <h5 class="card-title text-uppercase small fw-bold opacity-75">Събрани такси (Каса)</h5>
+                    <h2 class="display-5 fw-bold"><span th:text="${totalPaid}">0.00</span> лв.</h2>
+                    <p class="mb-0 small">✓ Парите са реално внесени от посетителите.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-3">
+            <div class="card bg-danger text-white shadow-sm border-0">
+                <div class="card-body p-4">
+                    <h5 class="card-title text-uppercase small fw-bold opacity-75">Несъбрани такси (Вземания)</h5>
+                    <h2 class="display-5 fw-bold"><span th:text="${totalUnpaid}">0.00</span> лв.</h2>
+                    <p class="mb-0 small">⚠ Уроци, които са проведени, но все още не са платени.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-white fw-bold py-3">
+            📋 История на посещенията и плащанията
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0 align-middle">
+                    <thead class="table-light">
+                    <tr>
+                        <th class="ps-4">Потребител</th>
+                        <th>Школа / Дейност</th>
+                        <th>Дата на отчитане</th>
+                        <th>Сума</th>
+                        <th class="pe-4">Статус</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="a : ${attendances}">
+                        <td class="fw-bold ps-4" th:text="${a.user.firstName + ' ' + a.user.lastName}"></td>
+                        <td th:text="${a.course.name}"></td>
+                        <td th:text="${#shapes != null ? a.date : #temporals.format(a.date, 'dd.MM.yyyy')}"></td>
+                        <td class="fw-bold" th:text="${a.course.pricePerLesson + ' лв.'}"></td>
+                        <td class="pe-4">
+                                <span class="badge" th:classappend="${a.isPaid ? 'bg-success' : 'bg-danger'}"
+                                      th:text="${a.isPaid ? 'Платено' : 'Неплатено'}">
+                                </span>
+                        </td>
+                    </tr>
+                    <tr th:if="${attendances.isEmpty()}">
+                        <td colspan="5" class="text-center text-muted p-4">Все още няма записани финансови транзакции.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
