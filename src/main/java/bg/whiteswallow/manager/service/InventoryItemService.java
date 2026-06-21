@@ -12,4 +12,6 @@ public interface InventoryItemService {
     void deleteItem(UUID id);
     InventoryItemAddDTO getItemForEdit(UUID id);
     void updateItem(UUID id, InventoryItemAddDTO itemDTO);
+    void lendItem(UUID itemId, UUID userId);
+    void returnItem(UUID itemId);
 }

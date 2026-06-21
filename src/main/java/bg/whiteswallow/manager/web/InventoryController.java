@@ -3,6 +3,7 @@ package bg.whiteswallow.manager.web;
 import bg.whiteswallow.manager.model.dto.inventory.InventoryItemAddDTO;
 import bg.whiteswallow.manager.model.entity.inventory.ItemStatus;
 import bg.whiteswallow.manager.service.InventoryItemService;
+import bg.whiteswallow.manager.service.UserService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
@@ -18,9 +19,11 @@ import java.util.UUID;
 public class InventoryController {
 
     private final InventoryItemService inventoryItemService;
+    private final UserService userService;
 
-    public InventoryController(InventoryItemService inventoryItemService) {
+    public InventoryController(InventoryItemService inventoryItemService, UserService userService) {
         this.inventoryItemService = inventoryItemService;
+        this.userService = userService;
     }
 
     @ModelAttribute("inventoryItemAddDTO")
@@ -94,6 +97,33 @@ public class InventoryController {
         }
 
         inventoryItemService.updateItem(id, inventoryEditDTO);
+        return "redirect:/inventory";
+    }
+
+
+    @GetMapping("/lend/{id}")
+    public String lendItemForm(@PathVariable UUID id, Model model, HttpSession session) {
+        if (!"ADMIN".equals(session.getAttribute("user_role"))) return "redirect:/inventory";
+
+        model.addAttribute("itemToLend", inventoryItemService.getItemForEdit(id));
+        model.addAttribute("itemId", id);
+        model.addAttribute("allUsers", userService.getAllUsers());
+        return "inventory-lend";
+    }
+
+    @PostMapping("/lend/{id}")
+    public String confirmLendItem(@PathVariable UUID id, @RequestParam("userId") UUID userId, HttpSession session) {
+        if (!"ADMIN".equals(session.getAttribute("user_role"))) return "redirect:/inventory";
+
+        inventoryItemService.lendItem(id, userId);
+        return "redirect:/inventory";
+    }
+
+    @PostMapping("/return/{id}")
+    public String returnItem(@PathVariable UUID id, HttpSession session) {
+        if (!"ADMIN".equals(session.getAttribute("user_role"))) return "redirect:/inventory";
+
+        inventoryItemService.returnItem(id);
         return "redirect:/inventory";
     }
 }

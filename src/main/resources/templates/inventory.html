@@ -50,7 +50,7 @@
 
     <div class="table-responsive bg-white rounded shadow-sm p-3">
         <table class="table table-hover align-middle">
-            <thead class="table-primary">
+            <thead class="table-dark">
             <tr>
                 <th>Наименование</th>
                 <th>Състояние</th>
@@ -61,16 +61,23 @@
             </thead>
             <tbody>
             <tr th:each="item : ${allItems}">
-                <td class="fw-bold" th:text="${item.name}">Гайда</td>
-                <td th:text="${item.itemCondition}">Много добро</td>
+                <td class="fw-bold text-primary" th:text="${item.name}"></td>
+                <td th:text="${item.itemCondition}"></td>
                 <td>
                         <span class="badge rounded-pill"
                               th:classappend="${item.status.name() == 'AVAILABLE' ? 'bg-success' : (item.status.name() == 'BORROWED' ? 'bg-secondary' : 'bg-danger')}"
                               th:text="${item.status.name() == 'AVAILABLE' ? 'Наличен' : (item.status.name() == 'BORROWED' ? 'Зает' : 'В ремонт')}">
                         </span>
                 </td>
-                <td th:text="${item.borrowedBy != null ? item.borrowedBy.fullName : '-'}">-</td>
+
+                <td th:text="${item.borrowedBy != null ? item.borrowedBy.firstName + ' ' + item.borrowedBy.lastName : '-'}">-</td>
+
                 <td th:if="${session.user_role == 'ADMIN'}">
+                    <a th:if="${item.status.name() == 'AVAILABLE'}" th:href="@{/inventory/lend/{id}(id=${item.id})}" class="btn btn-info btn-sm text-white fw-bold">Дай</a>
+                    <form th:if="${item.status.name() == 'BORROWED'}" th:action="@{/inventory/return/{id}(id=${item.id})}" th:method="POST" class="d-inline">
+                        <button type="submit" class="btn btn-success btn-sm fw-bold">Върни</button>
+                    </form>
+
                     <a th:href="@{/inventory/edit/{id}(id=${item.id})}" class="btn btn-warning btn-sm fw-bold">Редактирай</a>
                     <form th:action="@{/inventory/delete/{id}(id=${item.id})}" th:method="POST" class="d-inline">
                         <button type="submit" class="btn btn-danger btn-sm fw-bold" onclick="return confirm('Изтриване на този запис?')">Изтрий</button>
@@ -78,7 +85,7 @@
                 </td>
             </tr>
             <tr th:if="${allItems.isEmpty()}">
-                <td colspan="5" class="text-center text-muted">Инвентарът е празен.</td>
+                <td colspan="5" class="text-center text-muted p-4">Инвентарът е празен.</td>
             </tr>
             </tbody>
         </table>
