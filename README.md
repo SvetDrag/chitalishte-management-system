@@ -51,12 +51,31 @@ The system is built with strict Role-Based Access Control (RBAC) and offers a ta
 *(Designed to attract new members and showcase activities)*
 
 ### Instructor Dashboard
-![Instructor Dashboard](images/employee-dashboard.png)
+![Instructor Dashboard](images/admin-dashboard.png)
 *(Managing attendees, marking attendance, and tracking payments)*
 
 ### Admin Financial Report
-![Financial Report](images/admin-finances.png)
+![Financial Report](images/finance.png)
 *(Real-time aggregation of revenues and pending payments)*
+
+---
+
+## 👨‍💻 About the Author
+
+**Svetlozar Dragnev**  
+*19-year-old innovative ICT student, aspiring software developer, and community leader.*
+
+I combine a strong technical foundation in software logic with proven organizational and administrative skills. Skilled in Java, Windows OS, and troubleshooting, I am passionate about starting a career in the IT sector, building impactful solutions, and delivering excellent user experiences.
+
+**Current Roles & Education:**
+* 🎓 **BSc in Information and Communication Technologies** – Nikola Vaptsarov Naval Academy (NVNA), Varna
+* 💻 **Software Engineering Student** – SoftUni (Since March 2025)
+* 🏛️ **Chairman** – Community Center "Byalata lyastovica - 2018", Dulovo (Since Feb 2025)
+* 👨‍🏫 **Instructor (Programming, Graphic Design & AI)** – Advance Academy, Varna (Since Nov 2025)
+* 🎸 *Fun fact: I also studied guitar, blending my analytical mindset with creative pursuits!*
+
+**Connect with me:**  
+[![GitHub](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white)](https://github.com/SvetDrag)
 
 ---
 
@@ -82,10 +101,10 @@ The system is built with strict Role-Based Access Control (RBAC) and offers a ta
 
 1. **Clone the repository:**
    ```bash
-   git clone [https://github.com/your-username/chitalishte-management-system.git](https://github.com/your-username/chitalishte-management-system.git)
+   git clone [https://github.com/SvetDrag/chitalishte-management-system.git](https://github.com/your-username/chitalishte-management-system.git)
 2. **Database Setup:**
-   * Ensure you have a MySQL server running. 
-   * Create an empty database. Example: 
+   * Ensure you have a MySQL server running.
+   * Create an empty database. Example:
    ```bash
    CREATE DATABASE chitalishte_db;
 3. **Configuration (application.properties):**
@@ -97,8 +116,8 @@ The system is built with strict Role-Based Access Control (RBAC) and offers a ta
      spring.datasource.password=your_password
      spring.jpa.hibernate.ddl-auto=update`
 4. **Run the application:**
-   * Open the project in your preferred IDE (IntelliJ IDEA / Eclipse). 
-   * Run the main _`ChitalishteApplication.java class`_. 
+   * Open the project in your preferred IDE (IntelliJ IDEA / Eclipse).
+   * Run the main _`ChitalishteApplication.java class`_.
    * Open your browser and navigate to _http://localhost:8080_.
 5. **Getting Started:**
    * **Register your first account _(it will automatically become the Administrator)_.**
@@ -106,10 +125,45 @@ The system is built with strict Role-Based Access Control (RBAC) and offers a ta
 
 ---
 
-## 🔮 Бъдещо надграждане (Roadmap)
-Този проект е солидна основа, която планирам да развивам. Предстоящи функционалности:
+## 🔮 Roadmap
+This project is a solid foundation that I plan to expand. Upcoming features include:
 
 * [ ] **Payment Gateway** Integration (e.g., Stripe) for online fee payments.
 * [ ] **Email Notifications** for class bookings, schedule changes, or upcoming events.
 * [ ] **PDF Report Generation** for financial logs and attendance registers.
 * [ ] **Donation Module** to support the community center's initiatives.Модул за дарения**, който да подпомага дейността на читалището.
+
+---
+## 📸 More Screenshots
+
+![Employee Dashboard](images/employee-dashboard.png)
+
+![Attendacne](images/attendance-01.png)
+
+![Attendacne](images/attendance-02.png)
+
+![Attendacne](images/attendance-03.png)
+
+![Course Add](images/course-add.png)
+
+![Courses](images/courses.png)
+
+![Employee](images/employee.png)
+
+![Add Event](images/event-add.png)
+
+![Events Page](images/events.png)
+
+![Inventory Page](images/inventory.png)
+
+![Register Page](images/register.png)
+
+![Login Page](images/login.png)
+
+![Schedule](images/schedule.png)
+
+![Schedule](images/schedule-accepted.png)
+
+![Schedule Employee](images/schedule-employee.png)
+
+![User Dashboard](images/user-dashboard.png)
