@@ -5,6 +5,7 @@ import bg.whiteswallow.manager.model.entity.course.Course;
 import bg.whiteswallow.manager.model.entity.course.CourseType;
 import bg.whiteswallow.manager.model.entity.course.LessonSlot;
 import bg.whiteswallow.manager.model.entity.user.User;
+import bg.whiteswallow.manager.event.LessonEnrollmentEvent;
 import bg.whiteswallow.manager.exception.ResourceNotFoundException;
 import bg.whiteswallow.manager.repository.CourseRepository;
 import bg.whiteswallow.manager.repository.LessonSlotRepository;
@@ -13,6 +14,7 @@ import bg.whiteswallow.manager.service.LessonSlotService;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,11 +28,14 @@ public class LessonSlotServiceImpl implements LessonSlotService {
     private final LessonSlotRepository lessonSlotRepository;
     private final CourseRepository courseRepository;
     private final UserRepository userRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
-    public LessonSlotServiceImpl(LessonSlotRepository lessonSlotRepository, CourseRepository courseRepository, UserRepository userRepository) {
+    public LessonSlotServiceImpl(LessonSlotRepository lessonSlotRepository, CourseRepository courseRepository,
+                                  UserRepository userRepository, ApplicationEventPublisher eventPublisher) {
         this.lessonSlotRepository = lessonSlotRepository;
         this.courseRepository = courseRepository;
         this.userRepository = userRepository;
+        this.eventPublisher = eventPublisher;
     }
 
     @Override
@@ -58,6 +63,7 @@ public class LessonSlotServiceImpl implements LessonSlotService {
         slot.getEnrolledUsers().add(user);
         lessonSlotRepository.save(slot);
         log.info("User '{}' enrolled in slot {}", user.getUsername(), slotId);
+        eventPublisher.publishEvent(new LessonEnrollmentEvent(this, userId, slotId));
         return true;
     }
 
