@@ -5,6 +5,7 @@ import bg.whiteswallow.manager.model.entity.course.Course;
 import bg.whiteswallow.manager.model.entity.course.CourseType;
 import bg.whiteswallow.manager.model.entity.course.LessonSlot;
 import bg.whiteswallow.manager.model.entity.user.User;
+import bg.whiteswallow.manager.exception.ResourceNotFoundException;
 import bg.whiteswallow.manager.repository.CourseRepository;
 import bg.whiteswallow.manager.repository.LessonSlotRepository;
 import bg.whiteswallow.manager.repository.UserRepository;
@@ -36,8 +37,10 @@ public class LessonSlotServiceImpl implements LessonSlotService {
     @Override
     @Transactional
     public boolean enrollUser(UUID slotId, UUID userId) {
-        LessonSlot slot = lessonSlotRepository.findById(slotId).orElseThrow();
-        User user = userRepository.findById(userId).orElseThrow();
+        LessonSlot slot = lessonSlotRepository.findById(slotId)
+                .orElseThrow(() -> new ResourceNotFoundException("Часът не е намерен."));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Потребителят не е намерен."));
 
 
         if (slot.getEnrolledUsers().contains(user)) {
@@ -55,7 +58,8 @@ public class LessonSlotServiceImpl implements LessonSlotService {
 
     @Override
     public void addSlot(LessonSlotAddDTO dto, UUID instructorId) {
-        Course course = courseRepository.findById(dto.getCourseId()).orElseThrow();
+        Course course = courseRepository.findById(dto.getCourseId())
+                .orElseThrow(() -> new ResourceNotFoundException("Школата не е намерена."));
 
         if (!course.getInstructor().getId().equals(instructorId)) {
             throw new IllegalArgumentException("Нямате права над тази школа!");
@@ -86,8 +90,10 @@ public class LessonSlotServiceImpl implements LessonSlotService {
     @Override
     @Transactional
     public boolean unenrollUser(UUID slotId, UUID userId) {
-        LessonSlot slot = lessonSlotRepository.findById(slotId).orElseThrow();
-        User user = userRepository.findById(userId).orElseThrow();
+        LessonSlot slot = lessonSlotRepository.findById(slotId)
+                .orElseThrow(() -> new ResourceNotFoundException("Часът не е намерен."));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Потребителят не е намерен."));
 
 
         if (!slot.getEnrolledUsers().contains(user)) {
@@ -102,5 +108,11 @@ public class LessonSlotServiceImpl implements LessonSlotService {
     @Override
     public List<LessonSlot> getUserUpcomingLessons(UUID userId) {
         return lessonSlotRepository.findAllByEnrolledUsersIdAndStartTimeAfterOrderByStartTimeAsc(userId, java.time.LocalDateTime.now());
+    }
+
+    @Override
+    public LessonSlot getSlotById(UUID slotId) {
+        return lessonSlotRepository.findById(slotId)
+                .orElseThrow(() -> new ResourceNotFoundException("Часът не е намерен."));
     }
 }

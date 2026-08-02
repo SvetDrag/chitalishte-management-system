@@ -4,6 +4,7 @@ import bg.whiteswallow.manager.model.dto.user.UserProfileEditDTO;
 import bg.whiteswallow.manager.model.dto.user.UserRegisterDTO;
 import bg.whiteswallow.manager.model.entity.user.User;
 import bg.whiteswallow.manager.model.entity.user.UserRole;
+import bg.whiteswallow.manager.exception.ResourceNotFoundException;
 import bg.whiteswallow.manager.repository.UserRepository;
 import bg.whiteswallow.manager.service.UserService;
 import org.slf4j.Logger;
@@ -59,7 +60,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void updateProfile(UUID id, UserProfileEditDTO userProfileEditDTO) {
-        User user = userRepository.findById(id).orElseThrow();
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Потребителят не е намерен."));
         user.setFirstName(userProfileEditDTO.getFirstName());
         user.setLastName(userProfileEditDTO.getLastName());
         user.setEmail(userProfileEditDTO.getEmail());
@@ -80,7 +82,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void changeUserRole(UUID id, UserRole newRole) {
-        User user = userRepository.findById(id).orElseThrow();
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Потребителят не е намерен."));
         user.setRole(newRole);
         userRepository.save(user);
     }

@@ -2,6 +2,7 @@ package bg.whiteswallow.manager.service.impl;
 
 import bg.whiteswallow.manager.model.dto.event.EventAddDTO;
 import bg.whiteswallow.manager.model.entity.event.Event;
+import bg.whiteswallow.manager.exception.ResourceNotFoundException;
 import bg.whiteswallow.manager.repository.EventRepository;
 import bg.whiteswallow.manager.service.EventService;
 import org.springframework.stereotype.Service;
@@ -42,7 +43,8 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public EventAddDTO getEventForEdit(UUID id) {
-        Event event = eventRepository.findById(id).orElseThrow();
+        Event event = eventRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Събитието не е намерено."));
         EventAddDTO dto = new EventAddDTO();
         dto.setTitle(event.getTitle());
         dto.setDescription(event.getDescription());
@@ -53,7 +55,8 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public void updateEvent(UUID id, EventAddDTO eventDTO) {
-        Event event = eventRepository.findById(id).orElseThrow();
+        Event event = eventRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Събитието не е намерено."));
         event.setTitle(eventDTO.getTitle());
         event.setDescription(eventDTO.getDescription());
         event.setEventDate(eventDTO.getEventDate());

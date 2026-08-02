@@ -3,6 +3,7 @@ package bg.whiteswallow.manager.service.impl;
 import bg.whiteswallow.manager.model.dto.course.CourseAddDTO;
 import bg.whiteswallow.manager.model.entity.course.Course;
 import bg.whiteswallow.manager.model.entity.user.User;
+import bg.whiteswallow.manager.exception.ResourceNotFoundException;
 import bg.whiteswallow.manager.repository.CourseRepository;
 import bg.whiteswallow.manager.repository.UserRepository;
 import bg.whiteswallow.manager.service.CourseService;
@@ -24,7 +25,8 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public void addCourse(CourseAddDTO courseAddDTO) {
-        User instructor = userRepository.findById(courseAddDTO.getInstructorId()).orElseThrow();
+        User instructor = userRepository.findById(courseAddDTO.getInstructorId())
+                .orElseThrow(() -> new ResourceNotFoundException("Преподавателят не е намерен."));
 
         Course course = Course.builder()
                 .name(courseAddDTO.getName())
@@ -37,8 +39,10 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public void updateCourse(UUID id, CourseAddDTO courseDTO) {
-        Course course = courseRepository.findById(id).orElseThrow();
-        User instructor = userRepository.findById(courseDTO.getInstructorId()).orElseThrow();
+        Course course = courseRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Школата не е намерена."));
+        User instructor = userRepository.findById(courseDTO.getInstructorId())
+                .orElseThrow(() -> new ResourceNotFoundException("Преподавателят не е намерен."));
 
         course.setName(courseDTO.getName());
         course.setType(courseDTO.getType());
@@ -49,7 +53,8 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public CourseAddDTO getCourseForEdit(UUID id) {
-        Course course = courseRepository.findById(id).orElseThrow();
+        Course course = courseRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Школата не е намерена."));
         CourseAddDTO dto = new CourseAddDTO();
         dto.setName(course.getName());
         dto.setType(course.getType());
@@ -75,7 +80,8 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public Course getCourseById(UUID id) {
-        return courseRepository.findById(id).orElseThrow();
+        return courseRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Школата не е намерена."));
     }
 
 }

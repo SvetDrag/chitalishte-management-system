@@ -1,10 +1,6 @@
 package bg.whiteswallow.manager.web;
 
 import bg.whiteswallow.manager.model.dto.course.LessonSlotAddDTO;
-import bg.whiteswallow.manager.model.entity.course.LessonAttendance;
-import bg.whiteswallow.manager.model.entity.course.LessonSlot;
-import bg.whiteswallow.manager.repository.LessonAttendanceRepository;
-import bg.whiteswallow.manager.repository.LessonSlotRepository;
 import bg.whiteswallow.manager.security.UserPrincipal;
 import bg.whiteswallow.manager.service.CourseService;
 import bg.whiteswallow.manager.service.LessonAttendanceService;
@@ -26,15 +22,11 @@ public class EmployeeController {
     private final LessonSlotService lessonSlotService;
     private final CourseService courseService;
     private final LessonAttendanceService attendanceService;
-    private final LessonSlotRepository lessonSlotRepository;
-    private final LessonAttendanceRepository attendanceRepository;
 
-    public EmployeeController(LessonSlotService lessonSlotService, LessonSlotRepository lessonSlotRepository, CourseService courseService, LessonAttendanceService attendanceService, LessonAttendanceRepository attendanceRepository) {
+    public EmployeeController(LessonSlotService lessonSlotService, CourseService courseService, LessonAttendanceService attendanceService) {
         this.lessonSlotService = lessonSlotService;
         this.courseService = courseService;
         this.attendanceService = attendanceService;
-        this.lessonSlotRepository = lessonSlotRepository;
-        this.attendanceRepository = attendanceRepository;
     }
 
     @ModelAttribute("lessonSlotAddDTO")
@@ -69,24 +61,9 @@ public class EmployeeController {
 
     @GetMapping("/schedule/report/{slotId}")
     public String reportPage(@PathVariable UUID slotId, Model model) {
-        bg.whiteswallow.manager.model.entity.course.LessonSlot slot = lessonSlotRepository.findById(slotId).orElseThrow();
-
-
-        java.util.List<LessonAttendance> reportedAttendances = attendanceRepository.findAllByLessonSlotId(slot.getId());
-
-
-        java.util.List<UUID> reportedUserIds = reportedAttendances.stream()
-                .map(a -> a.getUser().getId())
-                .toList();
-
-
-        java.util.List<bg.whiteswallow.manager.model.entity.user.User> pendingUsers = slot.getEnrolledUsers().stream()
-                .filter(u -> !reportedUserIds.contains(u.getId()))
-                .toList();
-
-        model.addAttribute("slot", slot);
-        model.addAttribute("pendingUsers", pendingUsers);
-        model.addAttribute("reportedAttendances", reportedAttendances); // Подаваме самите записи!
+        model.addAttribute("slot", lessonSlotService.getSlotById(slotId));
+        model.addAttribute("pendingUsers", attendanceService.getPendingUsersForSlot(slotId));
+        model.addAttribute("reportedAttendances", attendanceService.getAttendancesForSlot(slotId));
 
         return "employee-report";
     }
