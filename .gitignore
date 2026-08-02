@@ -31,3 +31,13 @@ build/
 
 ### VS Code ###
 .vscode/
+
+.claude/
+CLAUDE.md
+
+src/main/resources/Project-Assignments.docx
+src/main/resources/project-assigment.txt
+PROJECT_PLAN.md
+
+application-local.properties
+*.env
