@@ -1,5 +1,9 @@
 package bg.whiteswallow.manager.rental.client;
 
+import bg.whiteswallow.manager.rental.dto.EquipmentItemCreateDTO;
+import bg.whiteswallow.manager.rental.dto.EquipmentItemResponseDTO;
+import bg.whiteswallow.manager.rental.dto.HallCreateDTO;
+import bg.whiteswallow.manager.rental.dto.HallResponseDTO;
 import bg.whiteswallow.manager.rental.dto.RentalRequestCreateDTO;
 import bg.whiteswallow.manager.rental.dto.RentalRequestResponseDTO;
 import bg.whiteswallow.manager.rental.dto.RentalStatusUpdateDTO;
@@ -28,4 +32,28 @@ public interface RentalServiceClient {
 
     @DeleteMapping("/api/rentals/{id}")
     void deleteRentalRequest(@PathVariable("id") UUID id);
+
+    @GetMapping("/api/halls")
+    List<HallResponseDTO> getAllHalls();
+
+    @PostMapping("/api/halls")
+    HallResponseDTO createHall(@RequestBody HallCreateDTO createDTO);
+
+    @PutMapping("/api/halls/{id}")
+    HallResponseDTO updateHall(@PathVariable("id") UUID id, @RequestBody HallCreateDTO updateDTO);
+
+    @DeleteMapping("/api/halls/{id}")
+    void deleteHall(@PathVariable("id") UUID id);
+
+    @GetMapping("/api/equipment")
+    List<EquipmentItemResponseDTO> getAllEquipmentItems();
+
+    @PostMapping("/api/equipment")
+    EquipmentItemResponseDTO createEquipmentItem(@RequestBody EquipmentItemCreateDTO createDTO);
+
+    @PutMapping("/api/equipment/{id}")
+    EquipmentItemResponseDTO updateEquipmentItem(@PathVariable("id") UUID id, @RequestBody EquipmentItemCreateDTO updateDTO);
+
+    @DeleteMapping("/api/equipment/{id}")
+    void deleteEquipmentItem(@PathVariable("id") UUID id);
 }

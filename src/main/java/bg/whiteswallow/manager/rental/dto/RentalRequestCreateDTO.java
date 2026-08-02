@@ -11,10 +11,17 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
 
 @Getter
 @Setter
 public class RentalRequestCreateDTO {
+
+    @NotNull(message = "Изберете зала!")
+    private UUID hallId;
+
+    private List<UUID> equipmentItemIds;
 
     @NotBlank(message = "Името на наемателя е задължително!")
     private String renterName;
