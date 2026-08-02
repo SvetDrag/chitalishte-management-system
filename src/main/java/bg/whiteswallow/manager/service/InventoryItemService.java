@@ -14,4 +14,5 @@ public interface InventoryItemService {
     void updateItem(UUID id, InventoryItemAddDTO itemDTO);
     void lendItem(UUID itemId, UUID userId);
     void returnItem(UUID itemId);
+    List<InventoryItem> getOverdueItems(int overdueAfterDays);
 }

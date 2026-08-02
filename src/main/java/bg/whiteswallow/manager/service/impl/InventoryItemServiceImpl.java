@@ -7,13 +7,18 @@ import bg.whiteswallow.manager.exception.ResourceNotFoundException;
 import bg.whiteswallow.manager.repository.InventoryItemRepository;
 import bg.whiteswallow.manager.repository.UserRepository;
 import bg.whiteswallow.manager.service.InventoryItemService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
 @Service
 public class InventoryItemServiceImpl implements InventoryItemService {
+
+    private static final Logger log = LoggerFactory.getLogger(InventoryItemServiceImpl.class);
 
     private final InventoryItemRepository inventoryItemRepository;
     private final UserRepository userRepository;
@@ -73,7 +78,9 @@ public class InventoryItemServiceImpl implements InventoryItemService {
 
         item.setStatus(bg.whiteswallow.manager.model.entity.inventory.ItemStatus.BORROWED);
         item.setBorrowedBy(user);
+        item.setBorrowedOn(LocalDateTime.now());
         inventoryItemRepository.save(item);
+        log.info("Item '{}' lent to user '{}'", item.getName(), user.getUsername());
     }
 
     @Override
@@ -83,6 +90,15 @@ public class InventoryItemServiceImpl implements InventoryItemService {
 
         item.setStatus(bg.whiteswallow.manager.model.entity.inventory.ItemStatus.AVAILABLE);
         item.setBorrowedBy(null);
+        item.setBorrowedOn(null);
         inventoryItemRepository.save(item);
+        log.info("Item '{}' returned", item.getName());
+    }
+
+    @Override
+    public List<InventoryItem> getOverdueItems(int overdueAfterDays) {
+        LocalDateTime threshold = LocalDateTime.now().minusDays(overdueAfterDays);
+        return inventoryItemRepository.findAllByStatusAndBorrowedOnBefore(
+                bg.whiteswallow.manager.model.entity.inventory.ItemStatus.BORROWED, threshold);
     }
 }

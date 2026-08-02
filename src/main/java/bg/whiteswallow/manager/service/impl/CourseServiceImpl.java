@@ -7,6 +7,8 @@ import bg.whiteswallow.manager.exception.ResourceNotFoundException;
 import bg.whiteswallow.manager.repository.CourseRepository;
 import bg.whiteswallow.manager.repository.UserRepository;
 import bg.whiteswallow.manager.service.CourseService;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,6 +26,7 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
+    @CacheEvict(value = "courses", allEntries = true)
     public void addCourse(CourseAddDTO courseAddDTO) {
         validateAtLeastOnePrice(courseAddDTO);
         User instructor = userRepository.findById(courseAddDTO.getInstructorId())
@@ -39,6 +42,7 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
+    @CacheEvict(value = "courses", allEntries = true)
     public void updateCourse(UUID id, CourseAddDTO courseDTO) {
         validateAtLeastOnePrice(courseDTO);
         Course course = courseRepository.findById(id)
@@ -66,11 +70,13 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
+    @Cacheable("courses")
     public List<Course> getAllCourses() {
         return courseRepository.findAll();
     }
 
     @Override
+    @CacheEvict(value = "courses", allEntries = true)
     public void deleteCourse(UUID id) {
         courseRepository.deleteById(id);
     }

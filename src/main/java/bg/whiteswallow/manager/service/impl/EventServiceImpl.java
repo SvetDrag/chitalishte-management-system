@@ -5,6 +5,8 @@ import bg.whiteswallow.manager.model.entity.event.Event;
 import bg.whiteswallow.manager.exception.ResourceNotFoundException;
 import bg.whiteswallow.manager.repository.EventRepository;
 import bg.whiteswallow.manager.service.EventService;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,6 +22,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    @CacheEvict(value = "events", allEntries = true)
     public void addEvent(EventAddDTO eventAddDTO) {
         Event event = Event.builder()
                 .title(eventAddDTO.getTitle())
@@ -32,11 +35,13 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    @Cacheable("events")
     public List<Event> getAllEvents() {
         return eventRepository.findAll();
     }
 
     @Override
+    @CacheEvict(value = "events", allEntries = true)
     public void deleteEvent(UUID id) {
         eventRepository.deleteById(id);
     }
@@ -54,6 +59,7 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
+    @CacheEvict(value = "events", allEntries = true)
     public void updateEvent(UUID id, EventAddDTO eventDTO) {
         Event event = eventRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Събитието не е намерено."));

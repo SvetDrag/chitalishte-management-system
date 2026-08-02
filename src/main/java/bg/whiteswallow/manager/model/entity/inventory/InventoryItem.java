@@ -3,6 +3,7 @@ package bg.whiteswallow.manager.model.entity.inventory;
 import bg.whiteswallow.manager.model.entity.user.User;
 import jakarta.persistence.*;
 import lombok.*;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Getter
@@ -30,4 +31,6 @@ public class InventoryItem {
 
     @ManyToOne
     private User borrowedBy;
+
+    private LocalDateTime borrowedOn;
 }
