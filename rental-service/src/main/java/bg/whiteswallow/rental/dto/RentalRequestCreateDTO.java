@@ -10,10 +10,17 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
 
 @Getter
 @Setter
 public class RentalRequestCreateDTO {
+
+    @NotNull(message = "Hall is required")
+    private UUID hallId;
+
+    private List<UUID> equipmentItemIds;
 
     @NotBlank(message = "Renter name is required")
     private String renterName;

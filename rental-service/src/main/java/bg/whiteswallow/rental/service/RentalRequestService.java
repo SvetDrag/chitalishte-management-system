@@ -13,6 +13,6 @@ public interface RentalRequestService {
     RentalRequestResponseDTO updateStatus(UUID id, RentalStatusUpdateDTO statusUpdateDTO);
     void deleteRentalRequest(UUID id);
     List<RentalRequestResponseDTO> getAllRentalRequests();
-    boolean checkAvailability(LocalDateTime from, LocalDateTime to);
+    boolean checkAvailability(UUID hallId, LocalDateTime from, LocalDateTime to);
     void completeExpiredRentals();
 }

@@ -1,12 +1,18 @@
 package bg.whiteswallow.rental.service.impl;
 
+import bg.whiteswallow.rental.dto.EquipmentItemResponseDTO;
+import bg.whiteswallow.rental.dto.HallResponseDTO;
 import bg.whiteswallow.rental.dto.RentalRequestCreateDTO;
 import bg.whiteswallow.rental.dto.RentalRequestResponseDTO;
 import bg.whiteswallow.rental.dto.RentalStatusUpdateDTO;
+import bg.whiteswallow.rental.entity.EquipmentItem;
+import bg.whiteswallow.rental.entity.Hall;
 import bg.whiteswallow.rental.entity.RentalRequest;
 import bg.whiteswallow.rental.entity.RentalStatus;
 import bg.whiteswallow.rental.exception.HallNotAvailableException;
 import bg.whiteswallow.rental.exception.ResourceNotFoundException;
+import bg.whiteswallow.rental.repository.EquipmentItemRepository;
+import bg.whiteswallow.rental.repository.HallRepository;
 import bg.whiteswallow.rental.repository.RentalRequestRepository;
 import bg.whiteswallow.rental.service.RentalRequestService;
 import org.slf4j.Logger;
@@ -16,6 +22,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -26,9 +33,15 @@ public class RentalRequestServiceImpl implements RentalRequestService {
     private static final List<RentalStatus> ACTIVE_STATUSES = List.of(RentalStatus.PENDING, RentalStatus.CONFIRMED);
 
     private final RentalRequestRepository rentalRequestRepository;
+    private final HallRepository hallRepository;
+    private final EquipmentItemRepository equipmentItemRepository;
 
-    public RentalRequestServiceImpl(RentalRequestRepository rentalRequestRepository) {
+    public RentalRequestServiceImpl(RentalRequestRepository rentalRequestRepository,
+                                     HallRepository hallRepository,
+                                     EquipmentItemRepository equipmentItemRepository) {
         this.rentalRequestRepository = rentalRequestRepository;
+        this.hallRepository = hallRepository;
+        this.equipmentItemRepository = equipmentItemRepository;
     }
 
     @Override
@@ -38,11 +51,20 @@ public class RentalRequestServiceImpl implements RentalRequestService {
             throw new IllegalArgumentException("Крайният час трябва да е след началния.");
         }
 
-        if (!checkAvailability(createDTO.getStartDateTime(), createDTO.getEndDateTime())) {
+        Hall hall = hallRepository.findById(createDTO.getHallId())
+                .orElseThrow(() -> new ResourceNotFoundException("Залата не е намерена."));
+
+        if (!checkAvailability(hall.getId(), createDTO.getStartDateTime(), createDTO.getEndDateTime())) {
             throw new HallNotAvailableException("Залата вече е заета за избрания период.");
         }
 
+        List<EquipmentItem> equipmentItems = createDTO.getEquipmentItemIds() == null
+                ? Collections.emptyList()
+                : equipmentItemRepository.findAllById(createDTO.getEquipmentItemIds());
+
         RentalRequest rentalRequest = RentalRequest.builder()
+                .hall(hall)
+                .equipmentItems(equipmentItems)
                 .renterName(createDTO.getRenterName())
                 .renterPhone(createDTO.getRenterPhone())
                 .renterEmail(createDTO.getRenterEmail())
@@ -55,7 +77,8 @@ public class RentalRequestServiceImpl implements RentalRequestService {
                 .build();
 
         rentalRequest = rentalRequestRepository.save(rentalRequest);
-        log.info("Created rental request {} for renter '{}'", rentalRequest.getId(), rentalRequest.getRenterName());
+        log.info("Created rental request {} for renter '{}' in hall '{}'",
+                rentalRequest.getId(), rentalRequest.getRenterName(), hall.getName());
         return toResponseDTO(rentalRequest);
     }
 
@@ -90,9 +113,9 @@ public class RentalRequestServiceImpl implements RentalRequestService {
     }
 
     @Override
-    public boolean checkAvailability(LocalDateTime from, LocalDateTime to) {
+    public boolean checkAvailability(UUID hallId, LocalDateTime from, LocalDateTime to) {
         List<RentalRequest> overlapping = rentalRequestRepository
-                .findAllByStatusInAndStartDateTimeLessThanAndEndDateTimeGreaterThan(ACTIVE_STATUSES, to, from);
+                .findAllByHallIdAndStatusInAndStartDateTimeLessThanAndEndDateTimeGreaterThan(hallId, ACTIVE_STATUSES, to, from);
         return overlapping.isEmpty();
     }
 
@@ -115,6 +138,8 @@ public class RentalRequestServiceImpl implements RentalRequestService {
     private RentalRequestResponseDTO toResponseDTO(RentalRequest rentalRequest) {
         return RentalRequestResponseDTO.builder()
                 .id(rentalRequest.getId())
+                .hall(toHallDTO(rentalRequest.getHall()))
+                .equipmentItems(rentalRequest.getEquipmentItems().stream().map(this::toEquipmentDTO).toList())
                 .renterName(rentalRequest.getRenterName())
                 .renterPhone(rentalRequest.getRenterPhone())
                 .renterEmail(rentalRequest.getRenterEmail())
@@ -123,6 +148,24 @@ public class RentalRequestServiceImpl implements RentalRequestService {
                 .purpose(rentalRequest.getPurpose())
                 .status(rentalRequest.getStatus())
                 .price(rentalRequest.getPrice())
+                .build();
+    }
+
+    private HallResponseDTO toHallDTO(Hall hall) {
+        return HallResponseDTO.builder()
+                .id(hall.getId())
+                .name(hall.getName())
+                .capacity(hall.getCapacity())
+                .description(hall.getDescription())
+                .build();
+    }
+
+    private EquipmentItemResponseDTO toEquipmentDTO(EquipmentItem item) {
+        return EquipmentItemResponseDTO.builder()
+                .id(item.getId())
+                .name(item.getName())
+                .pricePerRental(item.getPricePerRental())
+                .available(item.isAvailable())
                 .build();
     }
 }

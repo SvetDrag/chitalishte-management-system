@@ -35,9 +35,10 @@ public class RentalRequestController {
 
     @GetMapping("/availability")
     public ResponseEntity<AvailabilityResponseDTO> checkAvailability(
+            @RequestParam UUID hallId,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime from,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime to) {
-        boolean available = rentalRequestService.checkAvailability(from, to);
+        boolean available = rentalRequestService.checkAvailability(hallId, from, to);
         return ResponseEntity.ok(new AvailabilityResponseDTO(available));
     }
 

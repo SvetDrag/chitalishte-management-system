@@ -12,8 +12,8 @@ import java.util.UUID;
 @Repository
 public interface RentalRequestRepository extends JpaRepository<RentalRequest, UUID> {
 
-    List<RentalRequest> findAllByStatusInAndStartDateTimeLessThanAndEndDateTimeGreaterThan(
-            List<RentalStatus> statuses, LocalDateTime endDateTime, LocalDateTime startDateTime);
+    List<RentalRequest> findAllByHallIdAndStatusInAndStartDateTimeLessThanAndEndDateTimeGreaterThan(
+            UUID hallId, List<RentalStatus> statuses, LocalDateTime endDateTime, LocalDateTime startDateTime);
 
     List<RentalRequest> findAllByStatusAndEndDateTimeBefore(RentalStatus status, LocalDateTime endDateTime);
 }
