@@ -11,6 +11,8 @@ import bg.whiteswallow.rental.repository.RentalRequestRepository;
 import bg.whiteswallow.rental.service.RentalRequestService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -30,6 +32,7 @@ public class RentalRequestServiceImpl implements RentalRequestService {
     }
 
     @Override
+    @CacheEvict(value = "rentals", allEntries = true)
     public RentalRequestResponseDTO createRentalRequest(RentalRequestCreateDTO createDTO) {
         if (!createDTO.getEndDateTime().isAfter(createDTO.getStartDateTime())) {
             throw new IllegalArgumentException("Крайният час трябва да е след началния.");
@@ -57,6 +60,7 @@ public class RentalRequestServiceImpl implements RentalRequestService {
     }
 
     @Override
+    @CacheEvict(value = "rentals", allEntries = true)
     public RentalRequestResponseDTO updateStatus(UUID id, RentalStatusUpdateDTO statusUpdateDTO) {
         RentalRequest rentalRequest = rentalRequestRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Заявката за наем не е намерена."));
@@ -68,6 +72,7 @@ public class RentalRequestServiceImpl implements RentalRequestService {
     }
 
     @Override
+    @CacheEvict(value = "rentals", allEntries = true)
     public void deleteRentalRequest(UUID id) {
         if (!rentalRequestRepository.existsById(id)) {
             throw new ResourceNotFoundException("Заявката за наем не е намерена.");
@@ -77,6 +82,7 @@ public class RentalRequestServiceImpl implements RentalRequestService {
     }
 
     @Override
+    @Cacheable("rentals")
     public List<RentalRequestResponseDTO> getAllRentalRequests() {
         return rentalRequestRepository.findAll().stream()
                 .map(this::toResponseDTO)
@@ -88,6 +94,22 @@ public class RentalRequestServiceImpl implements RentalRequestService {
         List<RentalRequest> overlapping = rentalRequestRepository
                 .findAllByStatusInAndStartDateTimeLessThanAndEndDateTimeGreaterThan(ACTIVE_STATUSES, to, from);
         return overlapping.isEmpty();
+    }
+
+    @Override
+    @CacheEvict(value = "rentals", allEntries = true)
+    public void completeExpiredRentals() {
+        List<RentalRequest> expired = rentalRequestRepository
+                .findAllByStatusAndEndDateTimeBefore(RentalStatus.CONFIRMED, LocalDateTime.now());
+
+        for (RentalRequest rentalRequest : expired) {
+            rentalRequest.setStatus(RentalStatus.COMPLETED);
+        }
+
+        rentalRequestRepository.saveAll(expired);
+        if (!expired.isEmpty()) {
+            log.info("Marked {} expired confirmed rental(s) as COMPLETED", expired.size());
+        }
     }
 
     private RentalRequestResponseDTO toResponseDTO(RentalRequest rentalRequest) {

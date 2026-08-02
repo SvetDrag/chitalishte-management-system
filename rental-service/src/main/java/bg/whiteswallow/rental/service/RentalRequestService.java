@@ -14,4 +14,5 @@ public interface RentalRequestService {
     void deleteRentalRequest(UUID id);
     List<RentalRequestResponseDTO> getAllRentalRequests();
     boolean checkAvailability(LocalDateTime from, LocalDateTime to);
+    void completeExpiredRentals();
 }
