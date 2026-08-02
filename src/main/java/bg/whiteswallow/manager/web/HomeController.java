@@ -1,17 +1,17 @@
 package bg.whiteswallow.manager.web;
 
 import bg.whiteswallow.manager.model.entity.course.LessonAttendance;
+import bg.whiteswallow.manager.model.entity.user.UserRole;
+import bg.whiteswallow.manager.security.UserPrincipal;
 import bg.whiteswallow.manager.service.LessonAttendanceService;
 import bg.whiteswallow.manager.service.LessonSlotService;
-import org.springframework.ui.Model;
-import jakarta.servlet.http.HttpSession;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.UUID;
-
 
 @Controller
 public class HomeController {
@@ -25,42 +25,33 @@ public class HomeController {
     }
 
     @GetMapping("/")
-    public String index(HttpSession session) {
-        //If user is logged - redirect to the Dashboard
-        if (session.getAttribute("user_id") != null){
+    public String index(@AuthenticationPrincipal UserPrincipal principal) {
+        if (principal != null) {
             return "redirect:/home";
         }
-        return "index"; //if is still guest -> home page
+        return "index";
     }
 
     @GetMapping("/home")
-    public String home(HttpSession session, Model model) {
-        UUID userId = (UUID) session.getAttribute("user_id");
-        if (userId == null) {
-            return "redirect:/";
-        }
+    public String home(@AuthenticationPrincipal UserPrincipal principal, Model model) {
+        UserRole role = principal.getUser().getRole();
 
-        String role = (String) session.getAttribute("user_role");
-
-
-        if ("USER".equals(role)) {
-            model.addAttribute("myLessons", lessonSlotService.getUserUpcomingLessons(userId));
-        }
-
-        else if ("EMPLOYEE".equals(role)) {
-            model.addAttribute("mySchedule", lessonSlotService.getInstructorSchedule(userId));
+        if (role == UserRole.USER) {
+            model.addAttribute("myLessons", lessonSlotService.getUserUpcomingLessons(principal.getId()));
+        } else if (role == UserRole.EMPLOYEE) {
+            model.addAttribute("mySchedule", lessonSlotService.getInstructorSchedule(principal.getId()));
         }
 
         return "home";
     }
 
+    @GetMapping("/access-denied")
+    public String accessDenied() {
+        return "access-denied";
+    }
+
     @GetMapping("/admin/finances")
-    public String showFinances(HttpSession session, Model model) {
-
-        if (!"ADMIN".equals(session.getAttribute("user_role"))) {
-            return "redirect:/home";
-        }
-
+    public String showFinances(Model model) {
         List<LessonAttendance> allAttendances = lessonAttendanceService.getAllAttendances();
 
         BigDecimal totalPaid = BigDecimal.ZERO;

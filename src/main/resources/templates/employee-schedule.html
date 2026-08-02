@@ -6,15 +6,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body class="bg-light">
-<nav class="navbar navbar-expand-lg navbar-dark bg-secondary">
-    <div class="container">
-        <a class="navbar-brand" href="/home">Панел на Преподавателя</a>
-        <div class="d-flex align-items-center">
-            <a href="/home" class="btn btn-outline-light btn-sm me-3">Към главното табло</a>
-            <span class="text-white me-3">Здравей, <b th:text="${session.first_name}"></b></span>
-        </div>
-    </div>
-</nav>
+<nav th:replace="~{fragments/navbar :: navigation('employee')}"></nav>
 
 <div class="container mt-5">
     <div class="row">

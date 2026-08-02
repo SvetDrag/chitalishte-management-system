@@ -7,14 +7,7 @@
 </head>
 <body class="bg-light">
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-    <div class="container">
-        <a class="navbar-brand" href="/home">Бялата лястовица</a>
-        <div class="d-flex align-items-center">
-            <a href="/courses" class="btn btn-outline-light btn-sm me-3">Назад към всички школи</a>
-        </div>
-    </div>
-</nav>
+<nav th:replace="~{fragments/navbar :: navigation('courses')}"></nav>
 
 <div class="container mt-5">
     <h2 class="mb-2 fw-bold text-primary" th:text="${course.name}">Име на школата</h2>
@@ -42,24 +35,21 @@
                         </span>
                     </div>
 
+                    <a th:if="${currentUser == null}" href="/users/login" class="btn btn-outline-primary w-100 fw-bold">Влезте, за да се запишете</a>
+
                     <form th:action="@{/schedule/unenroll/{id}(id=${slot.id})}" th:method="POST"
-                          th:if="${slot.hasUser(session.user_id)}">
+                          th:if="${currentUser != null and slot.hasUser(currentUser.id)}">
                         <button type="submit" class="btn btn-outline-danger w-100 fw-bold">Откажи участие</button>
                     </form>
 
+                    <button th:if="${currentUser != null and course.instructor != null and currentUser.id == course.instructor.id}" class="btn btn-secondary w-100 fw-bold" disabled>Това е вашият час</button>
+
                     <form th:action="@{/schedule/enroll/{id}(id=${slot.id})}" th:method="POST"
-                          th:if="${session.user_id != null and !slot.hasUser(session.user_id) and slot.enrolledUsers.size() < slot.maxCapacity and session.user_id != (course.instructor != null ? course.instructor.id : null)}">
+                          th:if="${currentUser != null and !slot.hasUser(currentUser.id) and (course.instructor == null or currentUser.id != course.instructor.id) and slot.enrolledUsers.size() < slot.maxCapacity}">
                         <button type="submit" class="btn btn-primary w-100 fw-bold">Запиши се (<span th:text="${course.pricePerLesson}"></span> лв.)</button>
                     </form>
 
-                    <form th:action="@{/schedule/enroll/{id}(id=${slot.id})}" th:method="POST"
-                          th:if="${session.user_id == null and slot.enrolledUsers.size() < slot.maxCapacity}">
-                        <button type="submit" class="btn btn-primary w-100 fw-bold">Запиши се (<span th:text="${course.pricePerLesson}"></span> лв.)</button>
-                    </form>
-
-                    <button th:if="${session.user_id == (course.instructor != null ? course.instructor.id : null)}" class="btn btn-secondary w-100 fw-bold" disabled>Това е вашият час</button>
-
-                    <button th:if="${!slot.hasUser(session.user_id) and slot.enrolledUsers.size() >= slot.maxCapacity and session.user_id != (course.instructor != null ? course.instructor.id : null)}" class="btn btn-danger w-100 fw-bold" disabled>Пълна група</button></div>
+                    <button th:if="${currentUser != null and !slot.hasUser(currentUser.id) and (course.instructor == null or currentUser.id != course.instructor.id) and slot.enrolledUsers.size() >= slot.maxCapacity}" class="btn btn-danger w-100 fw-bold" disabled>Пълна група</button></div>
             </div>
         </div>
 

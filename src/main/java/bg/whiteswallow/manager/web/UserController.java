@@ -1,14 +1,15 @@
 package bg.whiteswallow.manager.web;
 
 import bg.whiteswallow.manager.model.dto.user.UserLoginDTO;
+import bg.whiteswallow.manager.model.dto.user.UserProfileEditDTO;
 import bg.whiteswallow.manager.model.dto.user.UserRegisterDTO;
-import bg.whiteswallow.manager.model.entity.user.User;
 import bg.whiteswallow.manager.model.entity.user.UserRole;
+import bg.whiteswallow.manager.security.UserPrincipal;
 import bg.whiteswallow.manager.service.UserService;
-import org.springframework.ui.Model;
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -36,8 +37,8 @@ public class UserController {
     }
 
     @GetMapping("/register")
-    public String register(HttpSession session) {
-        if (session.getAttribute("user_id") != null) {
+    public String register(@AuthenticationPrincipal UserPrincipal principal) {
+        if (principal != null) {
             return "redirect:/home";
         }
         return "register";
@@ -58,56 +59,50 @@ public class UserController {
     }
 
     @GetMapping("/login")
-    public String login(HttpSession session) {
-        if (session.getAttribute("user_id") != null) {
+    public String login(@AuthenticationPrincipal UserPrincipal principal) {
+        if (principal != null) {
             return "redirect:/home";
         }
         return "login";
     }
 
-    @PostMapping("/login")
-    public String confirmLogin(@Valid UserLoginDTO userLoginDTO,
-                               BindingResult bindingResult,
-                               RedirectAttributes redirectAttributes,
-                               HttpSession session) {
-
-        if (bindingResult.hasErrors()) {
-            redirectAttributes.addFlashAttribute("userLoginDTO", userLoginDTO);
-            redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.userLoginDTO", bindingResult);
-            return "redirect:/users/login";
+    @GetMapping("/profile")
+    public String profile(@AuthenticationPrincipal UserPrincipal principal, Model model) {
+        if (!model.containsAttribute("userProfileEditDTO")) {
+            UserProfileEditDTO dto = new UserProfileEditDTO();
+            dto.setFirstName(principal.getUser().getFirstName());
+            dto.setLastName(principal.getUser().getLastName());
+            dto.setEmail(principal.getUser().getEmail());
+            model.addAttribute("userProfileEditDTO", dto);
         }
-
-        User loggedUser = userService.login(userLoginDTO);
-
-        if (loggedUser == null) {
-            redirectAttributes.addFlashAttribute("userLoginDTO", userLoginDTO);
-            redirectAttributes.addFlashAttribute("badCredentials", true);
-            return "redirect:/users/login";
-        }
-
-        session.setAttribute("user_id", loggedUser.getId());
-        session.setAttribute("first_name", loggedUser.getFirstName());
-        session.setAttribute("user_role", loggedUser.getRole().name());
-
-        return "redirect:/home";
+        return "profile";
     }
 
-    @GetMapping("/logout")
-    public String logout(HttpSession session) {
-        session.invalidate();
-        return "redirect:/";
+    @PostMapping("/profile")
+    public String confirmProfile(@AuthenticationPrincipal UserPrincipal principal,
+                                 @Valid UserProfileEditDTO userProfileEditDTO,
+                                 BindingResult bindingResult,
+                                 RedirectAttributes redirectAttributes) {
+
+        if (bindingResult.hasErrors()) {
+            redirectAttributes.addFlashAttribute("userProfileEditDTO", userProfileEditDTO);
+            redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.userProfileEditDTO", bindingResult);
+            return "redirect:/users/profile";
+        }
+
+        userService.updateProfile(principal.getId(), userProfileEditDTO);
+        redirectAttributes.addFlashAttribute("profileUpdated", true);
+        return "redirect:/users/profile";
     }
 
     @GetMapping("/admin/users")
-    public String listUsers(Model model, HttpSession session) {
-        if (!"ADMIN".equals(session.getAttribute("user_role"))) return "redirect:/home";
+    public String listUsers(Model model) {
         model.addAttribute("allUsers", userService.getAllUsers());
         return "admin-users";
     }
 
     @PostMapping("/admin/delete/{id}")
-    public String deleteUser(@PathVariable UUID id, HttpSession session) {
-        if (!"ADMIN".equals(session.getAttribute("user_role"))) return "redirect:/home";
+    public String deleteUser(@PathVariable UUID id) {
         userService.deleteUser(id);
         return "redirect:/users/admin/users";
     }
@@ -115,15 +110,8 @@ public class UserController {
     @PostMapping("/admin/role/{id}")
     public String changeRole(@PathVariable UUID id,
                              @RequestParam("newRole") UserRole newRole,
-                             HttpSession session) {
-        // Само админ може да сменя роли
-        if (!"ADMIN".equals(session.getAttribute("user_role"))) {
-            return "redirect:/home";
-        }
-
-        // Защита: не позволяваме на админа да смени собствената си роля
-        UUID loggedUserId = (UUID) session.getAttribute("user_id");
-        if (loggedUserId.equals(id)) {
+                             @AuthenticationPrincipal UserPrincipal principal) {
+        if (principal.getId().equals(id)) {
             return "redirect:/users/admin/users";
         }
 

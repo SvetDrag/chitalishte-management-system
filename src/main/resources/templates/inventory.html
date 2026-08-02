@@ -11,7 +11,7 @@
 <div class="container mt-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="mb-0">Складов инвентар</h2>
-        <a th:if="${session.user_role == 'ADMIN'}" href="/inventory/add" class="btn btn-success fw-bold shadow-sm">
+        <a th:if="${currentUser != null and currentUser.role.name() == 'ADMIN'}" href="/inventory/add" class="btn btn-success fw-bold shadow-sm">
             + Добави предмет
         </a>
     </div>
@@ -24,7 +24,7 @@
                 <th>Състояние</th>
                 <th>Статус</th>
                 <th>Зает от</th>
-                <th th:if="${session.user_role == 'ADMIN'}">Действия</th>
+                <th th:if="${currentUser != null and currentUser.role.name() == 'ADMIN'}">Действия</th>
             </tr>
             </thead>
             <tbody>
@@ -40,7 +40,7 @@
 
                 <td th:text="${item.borrowedBy != null ? item.borrowedBy.firstName + ' ' + item.borrowedBy.lastName : '-'}">-</td>
 
-                <td th:if="${session.user_role == 'ADMIN'}">
+                <td th:if="${currentUser != null and currentUser.role.name() == 'ADMIN'}">
                     <a th:if="${item.status.name() == 'AVAILABLE'}" th:href="@{/inventory/lend/{id}(id=${item.id})}" class="btn btn-info btn-sm text-white fw-bold">Дай</a>
                     <form th:if="${item.status.name() == 'BORROWED'}" th:action="@{/inventory/return/{id}(id=${item.id})}" th:method="POST" class="d-inline">
                         <button type="submit" class="btn btn-success btn-sm fw-bold">Върни</button>

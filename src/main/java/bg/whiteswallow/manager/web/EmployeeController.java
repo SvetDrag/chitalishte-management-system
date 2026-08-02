@@ -5,11 +5,12 @@ import bg.whiteswallow.manager.model.entity.course.LessonAttendance;
 import bg.whiteswallow.manager.model.entity.course.LessonSlot;
 import bg.whiteswallow.manager.repository.LessonAttendanceRepository;
 import bg.whiteswallow.manager.repository.LessonSlotRepository;
+import bg.whiteswallow.manager.security.UserPrincipal;
 import bg.whiteswallow.manager.service.CourseService;
 import bg.whiteswallow.manager.service.LessonAttendanceService;
 import bg.whiteswallow.manager.service.LessonSlotService;
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -42,16 +43,9 @@ public class EmployeeController {
     }
 
     @GetMapping("/schedule")
-    public String schedule(Model model, HttpSession session) {
-        String role = (String) session.getAttribute("user_role");
-        if (role == null || (!role.equals("EMPLOYEE") && !role.equals("ADMIN"))) {
-            return "redirect:/home";
-        }
-
-        UUID instructorId = (UUID) session.getAttribute("user_id");
-
-       model.addAttribute("myCourses", courseService.getCoursesByInstructor(instructorId));
-        model.addAttribute("mySchedule", lessonSlotService.getInstructorSchedule(instructorId));
+    public String schedule(Model model, @AuthenticationPrincipal UserPrincipal principal) {
+        model.addAttribute("myCourses", courseService.getCoursesByInstructor(principal.getId()));
+        model.addAttribute("mySchedule", lessonSlotService.getInstructorSchedule(principal.getId()));
 
         return "employee-schedule";
     }
@@ -60,12 +54,7 @@ public class EmployeeController {
     public String confirmAddSlot(@Valid LessonSlotAddDTO lessonSlotAddDTO,
                                  BindingResult bindingResult,
                                  RedirectAttributes redirectAttributes,
-                                 HttpSession session) {
-
-        String role = (String) session.getAttribute("user_role");
-        if (role == null || (!role.equals("EMPLOYEE") && !role.equals("ADMIN"))) {
-            return "redirect:/home";
-        }
+                                 @AuthenticationPrincipal UserPrincipal principal) {
 
         if (bindingResult.hasErrors()) {
             redirectAttributes.addFlashAttribute("lessonSlotAddDTO", lessonSlotAddDTO);
@@ -73,18 +62,13 @@ public class EmployeeController {
             return "redirect:/employee/schedule";
         }
 
-        UUID instructorId = (UUID) session.getAttribute("user_id");
-        lessonSlotService.addSlot(lessonSlotAddDTO, instructorId);
+        lessonSlotService.addSlot(lessonSlotAddDTO, principal.getId());
 
         return "redirect:/employee/schedule";
     }
 
     @GetMapping("/schedule/report/{slotId}")
-    public String reportPage(@PathVariable UUID slotId, Model model, HttpSession session) {
-        if (!"EMPLOYEE".equals(session.getAttribute("user_role")) && !"ADMIN".equals(session.getAttribute("user_role"))) {
-            return "redirect:/home";
-        }
-
+    public String reportPage(@PathVariable UUID slotId, Model model) {
         bg.whiteswallow.manager.model.entity.course.LessonSlot slot = lessonSlotRepository.findById(slotId).orElseThrow();
 
 

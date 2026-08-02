@@ -11,7 +11,7 @@
 <div class="container mt-5">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h2 class="mb-0">Школи и курсове</h2>
-        <a th:if="${session.user_role == 'ADMIN'}" href="/courses/add" class="btn btn-success fw-bold shadow-sm">
+        <a th:if="${currentUser != null and currentUser.role.name() == 'ADMIN'}" href="/courses/add" class="btn btn-success fw-bold shadow-sm">
             + Добави школа
         </a>
     </div>
@@ -33,7 +33,7 @@
                         <a th:href="@{/courses/{id}/schedule(id=${course.id})}" class="btn btn-primary w-100 fw-bold">Виж свободните часове</a>
                     </div>
 
-                    <div class="mt-4 pt-3 border-top" th:if="${session.user_role == 'ADMIN'}">
+                    <div class="mt-4 pt-3 border-top" th:if="${currentUser != null and currentUser.role.name() == 'ADMIN'}">
                         <a th:href="@{/courses/edit/{id}(id=${course.id})}" class="btn btn-warning btn-sm fw-bold">Редактирай</a>
                         <form th:action="@{/courses/delete/{id}(id=${course.id})}" th:method="POST" class="d-inline">
                             <button type="submit" class="btn btn-danger btn-sm fw-bold" onclick="return confirm('Сигурни ли сте?')">Изтрий</button>

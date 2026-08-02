@@ -11,7 +11,7 @@
         <div class="col-md-4">
             <h2 class="text-center mb-4">Вход в системата</h2>
 
-            <div th:if="${badCredentials}" class="alert alert-danger text-center">
+            <div th:if="${param.error}" class="alert alert-danger text-center">
                 Грешно потребителско име или парола!
             </div>
 

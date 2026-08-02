@@ -6,7 +6,6 @@ import bg.whiteswallow.manager.model.entity.user.User;
 import bg.whiteswallow.manager.service.CourseService;
 import bg.whiteswallow.manager.service.LessonSlotService;
 import bg.whiteswallow.manager.service.UserService;
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -54,18 +53,14 @@ public class CourseController {
     }
 
     @GetMapping("/add")
-    public String addCourse(HttpSession session) {
-        if (!"ADMIN".equals(session.getAttribute("user_role"))) return "redirect:/courses";
+    public String addCourse() {
         return "course-add";
     }
 
     @PostMapping("/add")
     public String confirmAddCourse(@Valid CourseAddDTO courseAddDTO,
                                    BindingResult bindingResult,
-                                   RedirectAttributes redirectAttributes,
-                                   HttpSession session) {
-        if (!"ADMIN".equals(session.getAttribute("user_role"))) return "redirect:/courses";
-
+                                   RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
             redirectAttributes.addFlashAttribute("courseAddDTO", courseAddDTO);
             redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.courseAddDTO", bindingResult);
@@ -77,15 +72,13 @@ public class CourseController {
     }
 
     @PostMapping("/delete/{id}")
-    public String deleteCourse(@PathVariable UUID id, HttpSession session) {
-        if (!"ADMIN".equals(session.getAttribute("user_role"))) return "redirect:/courses";
+    public String deleteCourse(@PathVariable UUID id) {
         courseService.deleteCourse(id);
         return "redirect:/courses";
     }
 
     @GetMapping("/edit/{id}")
-    public String editCourse(@PathVariable UUID id, Model model, HttpSession session) {
-        if (!"ADMIN".equals(session.getAttribute("user_role"))) return "redirect:/courses";
+    public String editCourse(@PathVariable UUID id, Model model) {
         if (!model.containsAttribute("courseEditDTO")) {
             model.addAttribute("courseEditDTO", courseService.getCourseForEdit(id));
         }
@@ -97,10 +90,7 @@ public class CourseController {
     public String confirmEditCourse(@PathVariable UUID id,
                                     @Valid @ModelAttribute("courseEditDTO") CourseAddDTO courseEditDTO,
                                     BindingResult bindingResult,
-                                    RedirectAttributes redirectAttributes,
-                                    HttpSession session) {
-        if (!"ADMIN".equals(session.getAttribute("user_role"))) return "redirect:/courses";
-
+                                    RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
             redirectAttributes.addFlashAttribute("courseEditDTO", courseEditDTO);
             redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.courseEditDTO", bindingResult);

@@ -2,7 +2,6 @@ package bg.whiteswallow.manager.web;
 
 import bg.whiteswallow.manager.model.dto.event.EventAddDTO;
 import bg.whiteswallow.manager.service.EventService;
-import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -34,22 +33,14 @@ public class EventController {
     }
 
     @GetMapping("/add")
-    public String addEvent(HttpSession session) {
-        if (!"ADMIN".equals(session.getAttribute("user_role"))) {
-            return "redirect:/events";
-        }
+    public String addEvent() {
         return "event-add";
     }
 
     @PostMapping("/add")
     public String confirmAddEvent(@Valid EventAddDTO eventAddDTO,
                                   BindingResult bindingResult,
-                                  RedirectAttributes redirectAttributes,
-                                  HttpSession session) {
-
-        if (!"ADMIN".equals(session.getAttribute("user_role"))) {
-            return "redirect:/events";
-        }
+                                  RedirectAttributes redirectAttributes) {
 
         if (bindingResult.hasErrors()) {
             redirectAttributes.addFlashAttribute("eventAddDTO", eventAddDTO);
@@ -62,20 +53,13 @@ public class EventController {
     }
 
     @PostMapping("/delete/{id}")
-    public String deleteEvent(@PathVariable UUID id, HttpSession session) {
-        if (!"ADMIN".equals(session.getAttribute("user_role"))) {
-            return "redirect:/events";
-        }
+    public String deleteEvent(@PathVariable UUID id) {
         eventService.deleteEvent(id);
         return "redirect:/events";
     }
 
     @GetMapping("/edit/{id}")
-    public String editEvent(@PathVariable UUID id, Model model, HttpSession session) {
-        if (!"ADMIN".equals(session.getAttribute("user_role"))) {
-            return "redirect:/events";
-        }
-
+    public String editEvent(@PathVariable UUID id, Model model) {
         if (!model.containsAttribute("eventEditDTO")) {
             model.addAttribute("eventEditDTO", eventService.getEventForEdit(id));
         }
@@ -87,12 +71,7 @@ public class EventController {
     public String confirmEditEvent(@PathVariable UUID id,
                                    @Valid @ModelAttribute("eventEditDTO") EventAddDTO eventEditDTO,
                                    BindingResult bindingResult,
-                                   RedirectAttributes redirectAttributes,
-                                   HttpSession session) {
-
-        if (!"ADMIN".equals(session.getAttribute("user_role"))) {
-            return "redirect:/events";
-        }
+                                   RedirectAttributes redirectAttributes) {
 
         if (bindingResult.hasErrors()) {
             redirectAttributes.addFlashAttribute("eventEditDTO", eventEditDTO);
