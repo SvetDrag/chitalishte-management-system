@@ -7,6 +7,8 @@ import bg.whiteswallow.manager.exception.ResourceNotFoundException;
 import bg.whiteswallow.manager.repository.CourseRepository;
 import bg.whiteswallow.manager.repository.UserRepository;
 import bg.whiteswallow.manager.service.CourseService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -16,6 +18,8 @@ import java.util.UUID;
 
 @Service
 public class CourseServiceImpl implements CourseService {
+
+    private static final Logger log = LoggerFactory.getLogger(CourseServiceImpl.class);
 
     private final CourseRepository courseRepository;
     private final UserRepository userRepository;
@@ -39,6 +43,7 @@ public class CourseServiceImpl implements CourseService {
                 .instructor(instructor)
                 .build();
         courseRepository.save(course);
+        log.info("Created course '{}'", course.getName());
     }
 
     @Override
@@ -55,6 +60,7 @@ public class CourseServiceImpl implements CourseService {
         course.setIndividualPricePerLesson(courseDTO.getIndividualPricePerLesson());
         course.setInstructor(instructor);
         courseRepository.save(course);
+        log.info("Updated course {}", id);
     }
 
     @Override
@@ -79,6 +85,7 @@ public class CourseServiceImpl implements CourseService {
     @CacheEvict(value = "courses", allEntries = true)
     public void deleteCourse(UUID id) {
         courseRepository.deleteById(id);
+        log.info("Deleted course {}", id);
     }
 
     @Override

@@ -8,6 +8,8 @@ import bg.whiteswallow.manager.repository.LessonAttendanceRepository;
 import bg.whiteswallow.manager.repository.LessonSlotRepository;
 import bg.whiteswallow.manager.repository.UserRepository;
 import bg.whiteswallow.manager.service.LessonAttendanceService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +19,8 @@ import java.util.UUID;
 
 @Service
 public class LessonAttendanceServiceImpl implements LessonAttendanceService {
+
+    private static final Logger log = LoggerFactory.getLogger(LessonAttendanceServiceImpl.class);
 
     private final LessonAttendanceRepository attendanceRepository;
     private final LessonSlotRepository slotRepository;
@@ -50,12 +54,13 @@ public class LessonAttendanceServiceImpl implements LessonAttendanceService {
                 .build();
 
         attendanceRepository.save(attendance);
-
+        log.info("Marked attendance for user '{}' in slot {}, paid={}", user.getUsername(), slotId, isPaid);
     }
 
     @Override
     public void removeAttendance(UUID attendanceId) {
         attendanceRepository.deleteById(attendanceId);
+        log.info("Removed attendance record {}", attendanceId);
     }
 
     @Override
@@ -63,8 +68,9 @@ public class LessonAttendanceServiceImpl implements LessonAttendanceService {
         LessonAttendance attendance = attendanceRepository.findById(attendanceId)
                 .orElseThrow(() -> new ResourceNotFoundException("Записът за присъствие не е намерен."));
 
-            attendance.setPaid(!attendance.isPaid());
+        attendance.setPaid(!attendance.isPaid());
         attendanceRepository.save(attendance);
+        log.info("Toggled payment status for attendance {} to paid={}", attendanceId, attendance.isPaid());
     }
 
     @Override

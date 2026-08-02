@@ -36,6 +36,7 @@ public class InventoryItemServiceImpl implements InventoryItemService {
                 .status(itemAddDTO.getStatus())
                 .build();
         inventoryItemRepository.save(item);
+        log.info("Added inventory item '{}'", item.getName());
     }
 
     @Override
@@ -46,6 +47,7 @@ public class InventoryItemServiceImpl implements InventoryItemService {
     @Override
     public void deleteItem(UUID id) {
         inventoryItemRepository.deleteById(id);
+        log.info("Deleted inventory item {}", id);
     }
 
     @Override
@@ -67,6 +69,7 @@ public class InventoryItemServiceImpl implements InventoryItemService {
         item.setItemCondition(itemDTO.getItemCondition());
         item.setStatus(itemDTO.getStatus());
         inventoryItemRepository.save(item);
+        log.info("Updated inventory item {}", id);
     }
 
     @Override

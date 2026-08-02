@@ -86,6 +86,7 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new ResourceNotFoundException("Потребителят не е намерен."));
         user.setRole(newRole);
         userRepository.save(user);
+        log.info("Changed role of user '{}' to {}", user.getUsername(), newRole);
     }
 
     @Override

@@ -11,6 +11,8 @@ import bg.whiteswallow.manager.repository.LessonSlotRepository;
 import bg.whiteswallow.manager.repository.UserRepository;
 import bg.whiteswallow.manager.service.LessonSlotService;
 import jakarta.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,6 +20,8 @@ import java.util.UUID;
 
 @Service
 public class LessonSlotServiceImpl implements LessonSlotService {
+
+    private static final Logger log = LoggerFactory.getLogger(LessonSlotServiceImpl.class);
 
     private final LessonSlotRepository lessonSlotRepository;
     private final CourseRepository courseRepository;
@@ -53,6 +57,7 @@ public class LessonSlotServiceImpl implements LessonSlotService {
 
         slot.getEnrolledUsers().add(user);
         lessonSlotRepository.save(slot);
+        log.info("User '{}' enrolled in slot {}", user.getUsername(), slotId);
         return true;
     }
 
@@ -79,6 +84,7 @@ public class LessonSlotServiceImpl implements LessonSlotService {
                 .build();
 
         lessonSlotRepository.save(slot);
+        log.info("Instructor '{}' opened a new {} slot for course '{}'", instructorId, dto.getType(), course.getName());
     }
 
     @Override
@@ -106,6 +112,7 @@ public class LessonSlotServiceImpl implements LessonSlotService {
 
         slot.getEnrolledUsers().remove(user);
         lessonSlotRepository.save(slot);
+        log.info("User '{}' unenrolled from slot {}", user.getUsername(), slotId);
         return true;
     }
 
