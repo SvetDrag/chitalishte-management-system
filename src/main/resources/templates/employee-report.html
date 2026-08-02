@@ -7,13 +7,10 @@
 </head>
 <body class="bg-light">
 
-<nav class="navbar navbar-dark bg-secondary shadow-sm">
-    <div class="container">
-        <a class="navbar-brand fw-bold" href="/employee/schedule">⬅ Назад към Графика</a>
-    </div>
-</nav>
+<nav th:replace="~{fragments/navbar :: navigation('employee')}"></nav>
 
 <div class="container mt-5">
+    <a href="/employee/schedule" class="btn btn-outline-secondary btn-sm mb-3">⬅ Назад към Графика</a>
     <h3 class="text-primary fw-bold mb-1" th:text="${slot.course.name}">Име на школа</h3>
     <h6 class="text-muted mb-4">Дата на урока: <span th:text="${#temporals.format(slot.startTime, 'dd.MM.yyyy HH:mm')}"></span> ч.</h6>
 

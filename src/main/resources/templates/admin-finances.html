@@ -7,12 +7,7 @@
 </head>
 <body class="bg-light">
 
-<nav class="navbar navbar-dark bg-dark shadow-sm">
-    <div class="container">
-        <a class="navbar-brand fw-bold" href="/home">Бялата лястовица - Финанси</a>
-        <a href="/home" class="btn btn-outline-light btn-sm">Назад към таблото</a>
-    </div>
-</nav>
+<nav th:replace="~{fragments/navbar :: navigation('admin')}"></nav>
 
 <div class="container mt-5">
     <h2 class="mb-4 fw-bold text-dark">Финансов отчет на читалището</h2>

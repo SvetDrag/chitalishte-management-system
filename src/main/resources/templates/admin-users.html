@@ -7,14 +7,7 @@
 </head>
 <body class="bg-light">
 
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-    <div class="container">
-        <a class="navbar-brand" href="/home">Бялата лястовица</a>
-        <div class="d-flex align-items-center">
-            <a href="/home" class="btn btn-outline-light btn-sm me-2">Назад към таблото</a>
-        </div>
-    </div>
-</nav>
+<nav th:replace="~{fragments/navbar :: navigation('admin')}"></nav>
 
 <div class="container mt-5">
     <h2 class="mb-4 text-primary fw-bold">Управление на потребители</h2>
