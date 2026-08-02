@@ -29,7 +29,7 @@ public class SecurityConfig {
                         .requestMatchers("/courses/add", "/courses/edit/**", "/courses/delete/**").hasRole("ADMIN")
                         .requestMatchers("/inventory/add", "/inventory/edit/**", "/inventory/delete/**",
                                 "/inventory/lend/**", "/inventory/return/**").hasRole("ADMIN")
-                        .requestMatchers("/users/admin/**", "/admin/finances").hasRole("ADMIN")
+                        .requestMatchers("/users/admin/**", "/admin/**").hasRole("ADMIN")
                         .requestMatchers("/employee/**").hasAnyRole("EMPLOYEE", "ADMIN")
                         .requestMatchers("/events", "/courses", "/courses/*/schedule", "/inventory", "/schedule").permitAll()
                         .anyRequest().authenticated()

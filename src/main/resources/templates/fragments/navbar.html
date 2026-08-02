@@ -40,6 +40,11 @@
                     <a class="nav-link fw-bold bg-warning text-dark rounded-pill px-3 ms-lg-2 shadow-sm"
                        href="/users/admin/users">⚙️ Админ Панел</a>
                 </li>
+
+                <li class="nav-item" th:if="${currentUser != null and currentUser.role.name() == 'ADMIN'}">
+                    <a class="nav-link fw-bold bg-light text-primary rounded-pill px-3 ms-lg-2 shadow-sm"
+                       href="/admin/rentals">🏛️ Наеми на залата</a>
+                </li>
             </ul>
         </div>
 
