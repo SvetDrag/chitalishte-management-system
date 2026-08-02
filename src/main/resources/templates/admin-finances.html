@@ -59,7 +59,7 @@
                         <td class="fw-bold ps-4" th:text="${a.user.firstName + ' ' + a.user.lastName}"></td>
                         <td th:text="${a.course.name}"></td>
                         <td th:text="${#shapes != null ? a.date : #temporals.format(a.date, 'dd.MM.yyyy')}"></td>
-                        <td class="fw-bold" th:text="${a.course.pricePerLesson + ' лв.'}"></td>
+                        <td class="fw-bold" th:text="${a.lessonSlot.effectivePrice + ' лв.'}"></td>
                         <td class="pe-4">
                                 <span class="badge" th:classappend="${a.isPaid ? 'bg-success' : 'bg-danger'}"
                                       th:text="${a.isPaid ? 'Платено' : 'Неплатено'}">

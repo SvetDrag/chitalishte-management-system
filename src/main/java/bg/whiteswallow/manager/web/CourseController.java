@@ -1,7 +1,6 @@
 package bg.whiteswallow.manager.web;
 
 import bg.whiteswallow.manager.model.dto.course.CourseAddDTO;
-import bg.whiteswallow.manager.model.entity.course.CourseType;
 import bg.whiteswallow.manager.model.entity.user.User;
 import bg.whiteswallow.manager.service.CourseService;
 import bg.whiteswallow.manager.service.LessonSlotService;
@@ -39,11 +38,6 @@ public class CourseController {
     @ModelAttribute("courseAddDTO")
     public CourseAddDTO initCourseAddDTO(){
         return new CourseAddDTO();
-    }
-
-    @ModelAttribute("courseTypes")
-    public CourseType[] courseTypes(){
-        return CourseType.values();
     }
 
     @GetMapping

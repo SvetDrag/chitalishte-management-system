@@ -21,14 +21,6 @@
                             <div class="invalid-feedback" th:errors="*{name}"></div>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label fw-bold">Тип на обучението</label>
-                            <select th:field="*{type}" class="form-select" th:classappend="${#fields.hasErrors('type')} ? 'is-invalid'">
-                                <option value="" disabled selected>Изберете формат...</option>
-                                <option th:each="t : ${courseTypes}" th:value="${t}" th:text="${t.name() == 'GROUP' ? 'Групово занятие' : 'Индивидуален урок'}"></option>
-                            </select>
-                            <div class="invalid-feedback" th:errors="*{type}"></div>
-                        </div>
-                        <div class="mb-3">
                             <label class="form-label fw-bold">Преподавател / Водител</label>
                             <select th:field="*{instructorId}" class="form-select" th:classappend="${#fields.hasErrors('instructorId')} ? 'is-invalid'">
                                 <option value="" disabled selected>Изберете служител...</option>
@@ -36,10 +28,18 @@
                             </select>
                             <div class="invalid-feedback" th:errors="*{instructorId}"></div>
                         </div>
-                        <div class="mb-4">
-                            <label class="form-label fw-bold">Цена за едно посещение (€)</label>
-                            <input type="number" step="0.01" th:field="*{pricePerLesson}" class="form-control" th:classappend="${#fields.hasErrors('pricePerLesson')} ? 'is-invalid'">
-                            <div class="invalid-feedback" th:errors="*{pricePerLesson}"></div>
+                        <p class="text-muted small mb-2">Попълнете поне една от таксите по-долу — школата може да предлага само групови, само индивидуални, или и двата формата.</p>
+                        <div class="row">
+                            <div class="col-md-6 mb-4">
+                                <label class="form-label fw-bold">Групова такса (€)</label>
+                                <input type="number" step="0.01" th:field="*{groupPricePerLesson}" class="form-control" th:classappend="${#fields.hasErrors('groupPricePerLesson')} ? 'is-invalid'">
+                                <div class="invalid-feedback" th:errors="*{groupPricePerLesson}"></div>
+                            </div>
+                            <div class="col-md-6 mb-4">
+                                <label class="form-label fw-bold">Индивидуална такса (€)</label>
+                                <input type="number" step="0.01" th:field="*{individualPricePerLesson}" class="form-control" th:classappend="${#fields.hasErrors('individualPricePerLesson')} ? 'is-invalid'">
+                                <div class="invalid-feedback" th:errors="*{individualPricePerLesson}"></div>
+                            </div>
                         </div>
                         <button type="submit" class="btn btn-success w-100 fs-5">Създай школа</button>
                     </form>

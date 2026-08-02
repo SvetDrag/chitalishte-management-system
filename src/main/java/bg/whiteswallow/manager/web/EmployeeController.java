@@ -1,6 +1,7 @@
 package bg.whiteswallow.manager.web;
 
 import bg.whiteswallow.manager.model.dto.course.LessonSlotAddDTO;
+import bg.whiteswallow.manager.model.entity.course.CourseType;
 import bg.whiteswallow.manager.security.UserPrincipal;
 import bg.whiteswallow.manager.service.CourseService;
 import bg.whiteswallow.manager.service.LessonAttendanceService;
@@ -32,6 +33,11 @@ public class EmployeeController {
     @ModelAttribute("lessonSlotAddDTO")
     public LessonSlotAddDTO initDTO() {
         return new LessonSlotAddDTO();
+    }
+
+    @ModelAttribute("courseTypes")
+    public CourseType[] courseTypes() {
+        return CourseType.values();
     }
 
     @GetMapping("/schedule")

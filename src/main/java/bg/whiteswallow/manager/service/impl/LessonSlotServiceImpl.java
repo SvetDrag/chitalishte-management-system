@@ -65,12 +65,16 @@ public class LessonSlotServiceImpl implements LessonSlotService {
             throw new IllegalArgumentException("Нямате права над тази школа!");
         }
 
+        if (!course.offers(dto.getType())) {
+            throw new IllegalArgumentException("Школата не предлага избрания формат на обучение.");
+        }
 
-        int capacity = (course.getType() == CourseType.INDIVIDUAL) ? 1 : 20;
+        int capacity = (dto.getType() == CourseType.INDIVIDUAL) ? 1 : 20;
 
         LessonSlot slot = LessonSlot.builder()
                 .course(course)
                 .startTime(dto.getStartTime())
+                .type(dto.getType())
                 .maxCapacity(capacity)
                 .build();
 

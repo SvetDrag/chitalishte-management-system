@@ -19,7 +19,10 @@
         <div class="col-md-6 col-lg-4 mb-4" th:each="slot : ${upcomingSlots}">
             <div class="card shadow-sm h-100 border-0 border-start border-primary border-4">
                 <div class="card-body">
-                    <h5 class="card-title text-primary fw-bold" th:text="${slot.course.name}">Урок по...</h5>
+                    <h5 class="card-title text-primary fw-bold">
+                        <span th:text="${slot.course.name}">Урок по...</span>
+                        <span class="badge bg-secondary fs-6" th:text="${slot.type.name() == 'GROUP' ? 'Групово' : 'Индивидуално'}"></span>
+                    </h5>
                     <p class="mb-1 text-muted">
                         Преподавател: <b class="text-dark" th:text="${slot.course.instructor.firstName + ' ' + slot.course.instructor.lastName}"></b>
                     </p>
@@ -40,7 +43,7 @@
 
                     <form th:action="@{/schedule/enroll/{id}(id=${slot.id})}" th:method="POST"
                           th:if="${currentUser != null and currentUser.id != slot.course.instructor.id and slot.enrolledUsers.size() < slot.maxCapacity}">
-                        <button type="submit" class="btn btn-primary w-100 fw-bold">Запиши се (<span th:text="${slot.course.pricePerLesson}"></span> лв.)</button>
+                        <button type="submit" class="btn btn-primary w-100 fw-bold">Запиши се (<span th:text="${slot.effectivePrice}"></span> лв.)</button>
                     </form>
 
                     <button th:if="${currentUser != null and currentUser.id != slot.course.instructor.id and slot.enrolledUsers.size() >= slot.maxCapacity}" class="btn btn-danger w-100 fw-bold" disabled>Няма свободни места</button>

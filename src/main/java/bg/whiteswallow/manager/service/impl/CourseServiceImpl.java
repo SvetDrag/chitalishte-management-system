@@ -25,28 +25,30 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public void addCourse(CourseAddDTO courseAddDTO) {
+        validateAtLeastOnePrice(courseAddDTO);
         User instructor = userRepository.findById(courseAddDTO.getInstructorId())
                 .orElseThrow(() -> new ResourceNotFoundException("Преподавателят не е намерен."));
 
         Course course = Course.builder()
                 .name(courseAddDTO.getName())
-                .type(courseAddDTO.getType())
-                .pricePerLesson(courseAddDTO.getPricePerLesson())
-                .instructor(instructor) // Закачаме преподавателя
+                .groupPricePerLesson(courseAddDTO.getGroupPricePerLesson())
+                .individualPricePerLesson(courseAddDTO.getIndividualPricePerLesson())
+                .instructor(instructor)
                 .build();
         courseRepository.save(course);
     }
 
     @Override
     public void updateCourse(UUID id, CourseAddDTO courseDTO) {
+        validateAtLeastOnePrice(courseDTO);
         Course course = courseRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Школата не е намерена."));
         User instructor = userRepository.findById(courseDTO.getInstructorId())
                 .orElseThrow(() -> new ResourceNotFoundException("Преподавателят не е намерен."));
 
         course.setName(courseDTO.getName());
-        course.setType(courseDTO.getType());
-        course.setPricePerLesson(courseDTO.getPricePerLesson());
+        course.setGroupPricePerLesson(courseDTO.getGroupPricePerLesson());
+        course.setIndividualPricePerLesson(courseDTO.getIndividualPricePerLesson());
         course.setInstructor(instructor);
         courseRepository.save(course);
     }
@@ -57,8 +59,8 @@ public class CourseServiceImpl implements CourseService {
                 .orElseThrow(() -> new ResourceNotFoundException("Школата не е намерена."));
         CourseAddDTO dto = new CourseAddDTO();
         dto.setName(course.getName());
-        dto.setType(course.getType());
-        dto.setPricePerLesson(course.getPricePerLesson());
+        dto.setGroupPricePerLesson(course.getGroupPricePerLesson());
+        dto.setIndividualPricePerLesson(course.getIndividualPricePerLesson());
         dto.setInstructorId(course.getInstructor().getId());
         return dto;
     }
@@ -84,4 +86,9 @@ public class CourseServiceImpl implements CourseService {
                 .orElseThrow(() -> new ResourceNotFoundException("Школата не е намерена."));
     }
 
+    private void validateAtLeastOnePrice(CourseAddDTO courseDTO) {
+        if (courseDTO.getGroupPricePerLesson() == null && courseDTO.getIndividualPricePerLesson() == null) {
+            throw new IllegalArgumentException("Школата трябва да предлага поне един формат - групов или индивидуален.");
+        }
+    }
 }

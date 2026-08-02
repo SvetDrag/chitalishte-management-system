@@ -26,6 +26,7 @@
                 <div class="card-body">
                     <h5 class="card-title text-dark mb-3">
                         📅 <b th:text="${#temporals.format(slot.startTime, 'dd.MM.yyyy HH:mm')}"></b> ч.
+                        <span class="badge bg-secondary fs-6" th:text="${slot.type.name() == 'GROUP' ? 'Групово' : 'Индивидуално'}"></span>
                     </h5>
 
                     <div class="d-flex justify-content-between align-items-center mb-3 p-2 bg-light rounded">
@@ -46,7 +47,7 @@
 
                     <form th:action="@{/schedule/enroll/{id}(id=${slot.id})}" th:method="POST"
                           th:if="${currentUser != null and !slot.hasUser(currentUser.id) and (course.instructor == null or currentUser.id != course.instructor.id) and slot.enrolledUsers.size() < slot.maxCapacity}">
-                        <button type="submit" class="btn btn-primary w-100 fw-bold">Запиши се (<span th:text="${course.pricePerLesson}"></span> лв.)</button>
+                        <button type="submit" class="btn btn-primary w-100 fw-bold">Запиши се (<span th:text="${slot.effectivePrice}"></span> лв.)</button>
                     </form>
 
                     <button th:if="${currentUser != null and !slot.hasUser(currentUser.id) and (course.instructor == null or currentUser.id != course.instructor.id) and slot.enrolledUsers.size() >= slot.maxCapacity}" class="btn btn-danger w-100 fw-bold" disabled>Пълна група</button></div>

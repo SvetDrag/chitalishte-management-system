@@ -22,14 +22,19 @@ public class Course {
     @Column(nullable = false)
     private String name;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private CourseType type;
+    private BigDecimal groupPricePerLesson;
 
-    @Column(nullable = false)
-    private BigDecimal pricePerLesson;
+    private BigDecimal individualPricePerLesson;
 
     @ManyToOne
     @JoinColumn(name = "instructor_id")
     private User instructor;
+
+    public boolean offers(CourseType type) {
+        return getPriceFor(type) != null;
+    }
+
+    public BigDecimal getPriceFor(CourseType type) {
+        return type == CourseType.INDIVIDUAL ? individualPricePerLesson : groupPricePerLesson;
+    }
 }

@@ -1,5 +1,6 @@
 package bg.whiteswallow.manager.model.dto.course;
 
+import bg.whiteswallow.manager.model.entity.course.CourseType;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -15,6 +16,9 @@ public class LessonSlotAddDTO {
 
     @NotNull(message = "Моля, изберете школа!")
     private UUID courseId;
+
+    @NotNull(message = "Моля, изберете формат на часа!")
+    private CourseType type;
 
     @NotNull(message = "Датата и часът са задължителни!")
     @FutureOrPresent(message = "Часът не може да е в миналото!")

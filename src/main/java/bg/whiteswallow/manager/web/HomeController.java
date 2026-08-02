@@ -58,7 +58,7 @@ public class HomeController {
         BigDecimal totalUnpaid = BigDecimal.ZERO;
 
         for (LessonAttendance attendance : allAttendances) {
-            BigDecimal price = attendance.getCourse().getPricePerLesson();
+            BigDecimal price = attendance.getLessonSlot().getEffectivePrice();
 
             if (attendance.isPaid()) {
                 totalPaid = totalPaid.add(price);

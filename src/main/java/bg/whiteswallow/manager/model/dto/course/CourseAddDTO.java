@@ -1,7 +1,6 @@
 package bg.whiteswallow.manager.model.dto.course;
 
 
-import bg.whiteswallow.manager.model.entity.course.CourseType;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -18,12 +17,11 @@ public class CourseAddDTO {
     @NotBlank(message = "Името на дейността е задължително")
     private String name;
 
-    @NotNull(message = "Моля, изберете тип на дейността")
-    private CourseType type;
+    @Positive(message = "Груповата такса трябва да е положителна")
+    private BigDecimal groupPricePerLesson;
 
-    @NotNull(message = "Въведете цена на урок!")
-    @Positive(message = "Цената трябва да е положителна")
-    private BigDecimal pricePerLesson;
+    @Positive(message = "Индивидуалната такса трябва да е положителна")
+    private BigDecimal individualPricePerLesson;
 
     @NotNull(message = "Моля, изберете преподавател!")
     private UUID instructorId;

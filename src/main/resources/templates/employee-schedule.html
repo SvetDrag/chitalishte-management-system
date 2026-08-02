@@ -30,6 +30,15 @@
                         </div>
 
                         <div class="mb-3">
+                            <label class="form-label fw-bold">Формат на часа</label>
+                            <select th:field="*{type}" class="form-select" th:classappend="${#fields.hasErrors('type')} ? 'is-invalid'">
+                                <option value="" disabled selected>Изберете...</option>
+                                <option th:each="t : ${courseTypes}" th:value="${t}" th:text="${t.name() == 'GROUP' ? 'Групово занятие' : 'Индивидуален урок'}"></option>
+                            </select>
+                            <div class="invalid-feedback" th:errors="*{type}"></div>
+                        </div>
+
+                        <div class="mb-3">
                             <label class="form-label fw-bold">Дата и час на започване</label>
                             <input type="datetime-local" th:field="*{startTime}" class="form-control" th:classappend="${#fields.hasErrors('startTime')} ? 'is-invalid'">
                             <div class="invalid-feedback" th:errors="*{startTime}"></div>
@@ -48,6 +57,7 @@
                     <thead class="table-light">
                     <tr>
                         <th>Школа</th>
+                        <th>Формат</th>
                         <th>Дата и час</th>
                         <th>Записани хора</th>
                         <th>Статус</th>
@@ -56,6 +66,7 @@
                     <tbody>
                     <tr th:each="slot : ${mySchedule}">
                         <td class="fw-bold text-primary" th:text="${slot.course.name}"></td>
+                        <td th:text="${slot.type.name() == 'GROUP' ? 'Групово' : 'Индивидуално'}"></td>
                         <td th:text="${#temporals.format(slot.startTime, 'dd.MM.yyyy HH:mm')}"></td>
 
                         <td>
@@ -79,7 +90,7 @@
                         </td>
                     </tr>
                     <tr th:if="${mySchedule.isEmpty()}">
-                        <td colspan="4" class="text-center text-muted">Нямате обявени часове в графика.</td>
+                        <td colspan="5" class="text-center text-muted">Нямате обявени часове в графика.</td>
                     </tr>
                     </tbody>
                 </table>
