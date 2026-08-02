@@ -90,7 +90,6 @@ public class InventoryController {
         return "redirect:/inventory";
     }
 
-
     @GetMapping("/lend/{id}")
     public String lendItemForm(@PathVariable UUID id, Model model) {
         model.addAttribute("itemToLend", inventoryItemService.getItemForEdit(id));

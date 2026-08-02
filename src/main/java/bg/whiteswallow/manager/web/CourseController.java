@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
-import java.util.UUID;;
+import java.util.UUID;
 
 @Controller
 @RequestMapping("/courses")
@@ -28,7 +28,6 @@ public class CourseController {
         this.userService = userService;
         this.lessonSlotService = lessonSlotService;
     }
-
 
     @ModelAttribute("employees")
     public List<User> employees() {
@@ -99,6 +98,6 @@ public class CourseController {
     public String courseSchedule(@PathVariable UUID id, Model model) {
         model.addAttribute("course", courseService.getCourseById(id));
         model.addAttribute("upcomingSlots", lessonSlotService.getUpcomingSlotsForCourse(id));
-        return "course-schedule"; // Новият HTML файл
+        return "course-schedule";
     }
 }

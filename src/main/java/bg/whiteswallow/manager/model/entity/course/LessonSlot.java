@@ -37,13 +37,13 @@ public class LessonSlot {
     @Column(nullable = false)
     private int maxCapacity;
 
-
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "slot_enrolled_users",
             joinColumns = @JoinColumn(name = "slot_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
+    @Builder.Default
     private List<User> enrolledUsers = new ArrayList<>();
 
     public boolean hasUser(UUID userId) {

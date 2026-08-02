@@ -74,13 +74,13 @@ public class EmployeeController {
         return "employee-report";
     }
 
-        @PostMapping("/schedule/report/{slotId}/attendance/{attendanceId}/delete")
+    @PostMapping("/schedule/report/{slotId}/attendance/{attendanceId}/delete")
     public String deleteAttendance(@PathVariable UUID slotId, @PathVariable UUID attendanceId) {
         attendanceService.removeAttendance(attendanceId);
         return "redirect:/employee/schedule/report/" + slotId;
     }
 
-        @PostMapping("/schedule/report/{slotId}/attendance/{attendanceId}/toggle")
+    @PostMapping("/schedule/report/{slotId}/attendance/{attendanceId}/toggle")
     public String togglePayment(@PathVariable UUID slotId, @PathVariable UUID attendanceId) {
         attendanceService.togglePayment(attendanceId);
         return "redirect:/employee/schedule/report/" + slotId;
