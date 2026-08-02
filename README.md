@@ -2,34 +2,50 @@
 
 ![Java](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=java&logoColor=white)
 ![Spring Boot](https://img.shields.io/badge/Spring_Boot-6DB33F?style=for-the-badge&logo=spring-boot&logoColor=white)
+![Spring Security](https://img.shields.io/badge/Spring_Security-6DB33F?style=for-the-badge&logo=springsecurity&logoColor=white)
 ![MySQL](https://img.shields.io/badge/MySQL-00000F?style=for-the-badge&logo=mysql&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
 ![Bootstrap](https://img.shields.io/badge/Bootstrap-563D7C?style=for-the-badge&logo=bootstrap&logoColor=white)
 
-A comprehensive web-based ERP system designed to manage the daily operations of modern cultural institutions – from booking rehearsal slots and managing inventory, to financial tracking and attendance monitoring.
+A comprehensive web-based ERP system designed to manage the daily operations of modern cultural institutions – from booking rehearsal slots and managing inventory, to hall rentals, financial tracking, and attendance monitoring.
+
+The system consists of **two independent Spring Boot applications** that communicate over REST: the main application (Thymeleaf server-rendered UI) and a separate **Hall & Equipment Rental microservice**, each with its own database.
 
 ## 📖 Why I built this project?
-This project was born out of a real-world necessity. Managing the activities of the "White Swallow - 2018" Community Center in the city of Dulovo, I face administrative challenges daily—juggling rehearsal schedules, manually collecting fees, tracking traditional inventory (folk costumes, instruments), and organizing the cultural calendar.
+This project was born out of a real-world necessity. Managing the activities of the "White Swallow - 2018" Community Center in the city of Dulovo, I face administrative challenges daily—juggling rehearsal schedules, manually collecting fees, tracking traditional inventory (folk costumes, instruments), organizing the cultural calendar, and coordinating external hall rentals.
 
 As a software developer, I decided to replace notebooks and spreadsheets with a functional, modern, and automated solution that digitizes these processes and simplifies the workflow for both the administration and the community members.
 
 ---
 
+## 🏗️ Architecture
+
+| Application | Role | Port | Database |
+|---|---|---|---|
+| `chitalishte-management-system` | Main app – Thymeleaf UI, Spring Security, courses/events/inventory management | `8080` | `chitalishte_management_system` |
+| `rental-service` | REST microservice – hall & equipment rental, consumed by the main app via **Feign Client** | `8081` | `chitalishte_rental_db` |
+
+When an administrator manages hall rentals from the main application, requests are forwarded over HTTP (via OpenFeign) to the `rental-service`, which owns and persists the rental data in its own database — a genuine service boundary rather than a shared database.
+
+---
+
 ## ✨ Key Features & User Roles
 
-The system is built with strict Role-Based Access Control (RBAC) and offers a tailored dashboard experience based on the user's role.
+The system is built with strict Role-Based Access Control (RBAC) via **Spring Security** (hashed passwords, CSRF-protected forms) and offers a tailored dashboard experience based on the user's role.
 
 ### 👤 1. Unregistered Visitor (Guest)
 * Explores the modern landing page of the institution.
 * Views upcoming events from the cultural calendar.
-* Browses active courses, creative schools, and activities.
+* Browses active courses, creative schools, and activities — including their group and/or individual pricing.
 
 ### 🎓 2. Registered User
 * **Booking:** Enrolls in specific classes and rehearsals with a single click.
 * **Personal Dashboard:** Tracks upcoming personal schedules.
+* **Profile:** Views and edits their own profile information.
 * **Flexibility:** Can unenroll to free up capacity for others if unable to attend.
 
 ### 👨‍🏫 3. Instructor (Employee)
-* **Schedule Management:** Creates lesson slots for their assigned courses, defining date, time, and maximum group capacity.
+* **Schedule Management:** Creates lesson slots for their assigned courses — group or individual format, each with its own capacity and pricing.
 * **Digital Register:** Marks student attendance dynamically.
 * **Financial Tracking:** Toggles payment statuses (Paid/Unpaid) for each attendee with instant visual feedback.
 
@@ -37,8 +53,93 @@ The system is built with strict Role-Based Access Control (RBAC) and offers a ta
 * *Note: To simplify the initial setup, **the first registered user in the system automatically receives the ADMIN role**.*
 * **Control Center:** Manages users and assigns roles (e.g., promoting users to instructors).
 * **Events & Courses:** Curates the institution's portfolio of activities.
-* **Inventory Management:** Tracks traditional costumes, instruments, and props. Lends items to users and manages returns.
+* **Inventory Management:** Tracks traditional costumes, instruments, and props. Lends items to members and manages returns; overdue loans are flagged automatically.
+* **Hall & Equipment Rentals:** Manages the list of rentable halls and equipment, and processes external rental requests (pending → confirmed/cancelled → completed) — all handled by the separate `rental-service` microservice through a real-time Feign integration.
 * **Financial Module:** Accesses a global real-time financial report showing collected revenue and pending payments, alongside a detailed transaction history.
+
+---
+
+## 🛠️ Tech Stack
+
+**Backend:**
+* Java 17, Spring Boot 4
+* Spring MVC + Thymeleaf (main app), Spring RESTful API (microservice)
+* Spring Data JPA (Hibernate)
+* Spring Security (role-based auth, BCrypt password hashing, CSRF protection)
+* Spring Cloud OpenFeign (inter-service communication)
+* Spring Cache (in-memory caching for read-heavy listings)
+* Spring Scheduling (`@Scheduled` cron + fixed-delay jobs)
+* Spring AOP (cross-cutting execution-time logging advice)
+* Spring Events (decoupled in-process notifications)
+
+**Frontend:**
+* Thymeleaf
+* Bootstrap 5
+
+**Database:**
+* MySQL — one schema per application, each entity keyed by UUID
+
+**Testing:**
+* JUnit 5, Mockito, AssertJ, MockMvc, Spring Security Test, H2 (in-memory, test-only)
+* JaCoCo coverage reporting (≥70% line coverage in both applications)
+
+**DevOps:**
+* Docker & Docker Compose (both applications + both MySQL databases)
+
+---
+
+## 🔗 Integrations Between Applications
+
+* The main application's admin panel triggers **Feign Client** calls to the `rental-service` for hall and equipment CRUD and rental-request management (create, confirm/cancel status update, delete) — a real service-to-service integration, not a shared database.
+* The `rental-service` runs a nightly **cron job** that automatically marks expired confirmed rentals as completed, and caches its read endpoints, evicting the cache on every write.
+* The main application runs a separate **fixed-delay job** that periodically flags inventory items that have been borrowed for too long.
+
+---
+
+## 🚀 How to run locally
+
+### Option A — Docker Compose (recommended, starts everything)
+
+```bash
+docker compose up --build
+```
+
+This starts both MySQL databases, the `rental-service` microservice, and the main application. The main app will be available at `http://localhost:8080` and the microservice at `http://localhost:8081`.
+
+Optionally set a custom database password before starting:
+
+```bash
+DB_PASSWORD=your_password docker compose up --build
+```
+
+### Option B — Running manually
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/SvetDrag/chitalishte-management-system.git
+   ```
+2. **Start MySQL** and create two databases (or let `createDatabaseIfNotExist=true` create them automatically): `chitalishte_management_system` and `chitalishte_rental_db`.
+3. **Provide database credentials** via environment variables (`DB_USERNAME`, `DB_PASSWORD`) or a local, git-ignored `application-local.properties` file in each application's `src/main/resources`.
+4. **Run the microservice first:**
+   ```bash
+   cd rental-service
+   ./mvnw spring-boot:run
+   ```
+5. **Run the main application** (in a separate terminal, from the repository root):
+   ```bash
+   ./mvnw spring-boot:run
+   ```
+6. Open your browser at `http://localhost:8080`.
+7. **Getting Started:** Register your first account *(it automatically becomes the Administrator)*. Create a course, add a hall, register a second account, and promote them to an Instructor!
+
+### Running the tests
+
+```bash
+./mvnw test              # main application
+cd rental-service && ./mvnw test   # microservice
+```
+
+JaCoCo HTML coverage reports are generated at `target/site/jacoco/index.html` in each module.
 
 ---
 
@@ -79,59 +180,13 @@ I combine a strong technical foundation in software logic with proven organizati
 
 ---
 
-## 🛠️ Tech Stack
-
-**Backend:**
-* Java
-* Spring Boot
-* Spring Data JPA (Hibernate)
-* Spring Security
-
-**Frontend:**
-* Thymeleaf
-* Bootstrap 5 & Bootstrap Icons
-* HTML5 / CSS3
-
-**Database:**
-* MySQL
-
----
-
-## 🚀 How to run locally
-
-1. **Clone the repository:**
-   ```bash
-   git clone [https://github.com/SvetDrag/chitalishte-management-system.git](https://github.com/your-username/chitalishte-management-system.git)
-2. **Database Setup:**
-   * Ensure you have a MySQL server running.
-   * Create an empty database. Example:
-   ```bash
-   CREATE DATABASE chitalishte_db;
-3. **Configuration (application.properties):**
-   * Open _`src/main/resources/application.properties`_
-   * Provide your database credentials:
-   ```bash
-    `spring.datasource.url=jdbc:mysql://localhost:3306/chitalishte_db?allowPublicKeyRetrieval=true&useSSL=false
-     spring.datasource.username=root
-     spring.datasource.password=your_password
-     spring.jpa.hibernate.ddl-auto=update`
-4. **Run the application:**
-   * Open the project in your preferred IDE (IntelliJ IDEA / Eclipse).
-   * Run the main _`ChitalishteApplication.java class`_.
-   * Open your browser and navigate to _http://localhost:8080_.
-5. **Getting Started:**
-   * **Register your first account _(it will automatically become the Administrator)_.**
-   * Create a course, register a second account, and promote them to an Instructor!
-
----
-
 ## 🔮 Roadmap
 This project is a solid foundation that I plan to expand. Upcoming features include:
 
 * [ ] **Payment Gateway** Integration (e.g., Stripe) for online fee payments.
 * [ ] **Email Notifications** for class bookings, schedule changes, or upcoming events.
 * [ ] **PDF Report Generation** for financial logs and attendance registers.
-* [ ] **Donation Module** to support the community center's initiatives.Модул за дарения**, който да подпомага дейността на читалището.
+* [ ] **Donation Module** to support the community center's initiatives.
 
 ---
 ## 📸 More Screenshots
