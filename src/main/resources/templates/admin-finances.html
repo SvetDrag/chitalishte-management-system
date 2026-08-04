@@ -16,18 +16,18 @@
         <div class="col-md-6 mb-3">
             <div class="card bg-success text-white shadow-sm border-0">
                 <div class="card-body p-4">
-                    <h5 class="card-title text-uppercase small fw-bold opacity-75">Събрани такси (Каса)</h5>
+                    <h5 class="card-title text-uppercase small fw-bold opacity-75">Събрани приходи (Каса)</h5>
                     <h2 class="display-5 fw-bold"><span th:text="${totalPaid}">0.00</span> €</h2>
-                    <p class="mb-0 small">✓ Парите са реално внесени от посетителите.</p>
+                    <p class="mb-0 small">✓ Платени такси от посетители и потвърдени наеми на зали/техника.</p>
                 </div>
             </div>
         </div>
         <div class="col-md-6 mb-3">
             <div class="card bg-danger text-white shadow-sm border-0">
                 <div class="card-body p-4">
-                    <h5 class="card-title text-uppercase small fw-bold opacity-75">Несъбрани такси (Вземания)</h5>
+                    <h5 class="card-title text-uppercase small fw-bold opacity-75">Несъбрани приходи (Вземания)</h5>
                     <h2 class="display-5 fw-bold"><span th:text="${totalUnpaid}">0.00</span> €</h2>
-                    <p class="mb-0 small">⚠ Уроци, които са проведени, но все още не са платени.</p>
+                    <p class="mb-0 small">⚠ Неплатени такси и заявки за наем, чакащи потвърждение.</p>
                 </div>
             </div>
         </div>
@@ -54,7 +54,7 @@
                         <td class="fw-bold ps-4" th:text="${a.user.firstName + ' ' + a.user.lastName}"></td>
                         <td th:text="${a.course.name}"></td>
                         <td th:text="${#shapes != null ? a.date : #temporals.format(a.date, 'dd.MM.yyyy')}"></td>
-                        <td class="fw-bold" th:text="${a.lessonSlot.effectivePrice + ' лв.'}"></td>
+                        <td class="fw-bold" th:text="${a.lessonSlot.effectivePrice + ' €'}"></td>
                         <td class="pe-4">
                                 <span class="badge" th:classappend="${a.isPaid ? 'bg-success' : 'bg-danger'}"
                                       th:text="${a.isPaid ? 'Платено' : 'Неплатено'}">
@@ -63,6 +63,43 @@
                     </tr>
                     <tr th:if="${attendances.isEmpty()}">
                         <td colspan="5" class="text-center text-muted p-4">Все още няма записани финансови транзакции.</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-sm border-0 mb-5">
+        <div class="card-header bg-white fw-bold py-3">
+            🏛️ Приходи от наеми на зали и техника
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0 align-middle">
+                    <thead class="table-light">
+                    <tr>
+                        <th class="ps-4">Наемател</th>
+                        <th>Зала</th>
+                        <th>Период</th>
+                        <th>Сума</th>
+                        <th class="pe-4">Статус</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="r : ${rentals}">
+                        <td class="fw-bold ps-4" th:text="${r.renterName}"></td>
+                        <td th:text="${r.hall != null ? r.hall.name : '-'}"></td>
+                        <td th:text="${#temporals.format(r.startDateTime, 'dd.MM.yyyy HH:mm')}"></td>
+                        <td class="fw-bold" th:text="${r.price + ' €'}"></td>
+                        <td class="pe-4">
+                                <span class="badge" th:classappend="${r.status.name() == 'CONFIRMED' or r.status.name() == 'COMPLETED' ? 'bg-success' : 'bg-danger'}"
+                                      th:text="${r.status.name() == 'CONFIRMED' ? 'Потвърдена' : (r.status.name() == 'COMPLETED' ? 'Завършена' : 'Изчаква')}">
+                                </span>
+                        </td>
+                    </tr>
+                    <tr th:if="${rentals.isEmpty()}">
+                        <td colspan="5" class="text-center text-muted p-4">Все още няма приходи от наеми.</td>
                     </tr>
                     </tbody>
                 </table>
