@@ -39,9 +39,6 @@ public interface RentalServiceClient {
     @PostMapping("/api/halls")
     HallResponseDTO createHall(@RequestBody HallCreateDTO createDTO);
 
-    @PutMapping("/api/halls/{id}")
-    HallResponseDTO updateHall(@PathVariable("id") UUID id, @RequestBody HallCreateDTO updateDTO);
-
     @DeleteMapping("/api/halls/{id}")
     void deleteHall(@PathVariable("id") UUID id);
 
@@ -50,9 +47,6 @@ public interface RentalServiceClient {
 
     @PostMapping("/api/equipment")
     EquipmentItemResponseDTO createEquipmentItem(@RequestBody EquipmentItemCreateDTO createDTO);
-
-    @PutMapping("/api/equipment/{id}")
-    EquipmentItemResponseDTO updateEquipmentItem(@PathVariable("id") UUID id, @RequestBody EquipmentItemCreateDTO updateDTO);
 
     @DeleteMapping("/api/equipment/{id}")
     void deleteEquipmentItem(@PathVariable("id") UUID id);

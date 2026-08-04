@@ -176,11 +176,6 @@ public class DataSeeder implements ApplicationRunner {
         }
     }
 
-    /**
-     * Creates weekly slots for one course in one month. Slots whose start time has already passed
-     * get attendance seeded; the most recent past slot in a month deliberately leaves one enrolled
-     * user unmarked so the employee "pending" report view has something to show.
-     */
     private int seedMonthSlots(Course course, CourseType type, LocalDate monthStart, int[] dayOffsets, LocalTime time,
                                 List<User> regularUsers, int userCursor) {
         List<LessonSlot> monthSlots = new ArrayList<>();
@@ -215,11 +210,11 @@ public class DataSeeder implements ApplicationRunner {
 
         for (int i = 0; i <= lastPastSlotIndex; i++) {
             LessonSlot slot = monthSlots.get(i);
-            boolean isLastPastSlotOfMonth = (i == lastPastSlotIndex);
+            boolean leaveLastEnrolledUserUnmarked = (i == lastPastSlotIndex);
             List<User> enrolled = slot.getEnrolledUsers();
             for (int u = 0; u < enrolled.size(); u++) {
-                if (isLastPastSlotOfMonth && u == enrolled.size() - 1) {
-                    continue; // leave unmarked -> shows up as "pending" in the report view
+                if (leaveLastEnrolledUserUnmarked && u == enrolled.size() - 1) {
+                    continue;
                 }
                 boolean paid = (u % 3) != 0;
                 LessonAttendance attendance = LessonAttendance.builder()
