@@ -32,12 +32,12 @@
                         <p class="text-muted small mb-2">Попълнете поне една от таксите по-долу — школата може да предлага само групови, само индивидуални, или и двата формата.</p>
                         <div class="row">
                             <div class="col-md-6 mb-4">
-                                <label class="form-label fw-bold">Групова такса (лв.)</label>
+                                <label class="form-label fw-bold">Групова такса (€)</label>
                                 <input type="number" step="0.01" th:field="*{groupPricePerLesson}" class="form-control" th:classappend="${#fields.hasErrors('groupPricePerLesson')} ? 'is-invalid'">
                                 <div class="invalid-feedback" th:errors="*{groupPricePerLesson}"></div>
                             </div>
                             <div class="col-md-6 mb-4">
-                                <label class="form-label fw-bold">Индивидуална такса (лв.)</label>
+                                <label class="form-label fw-bold">Индивидуална такса (€)</label>
                                 <input type="number" step="0.01" th:field="*{individualPricePerLesson}" class="form-control" th:classappend="${#fields.hasErrors('individualPricePerLesson')} ? 'is-invalid'">
                                 <div class="invalid-feedback" th:errors="*{individualPricePerLesson}"></div>
                             </div>

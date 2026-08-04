@@ -43,7 +43,7 @@
 
                     <form th:action="@{/schedule/enroll/{id}(id=${slot.id})}" th:method="POST"
                           th:if="${currentUser != null and currentUser.id != slot.course.instructor.id and slot.enrolledUsers.size() < slot.maxCapacity}">
-                        <button type="submit" class="btn btn-primary w-100 fw-bold">Запиши се (<span th:text="${slot.effectivePrice}"></span> лв.)</button>
+                        <button type="submit" class="btn btn-primary w-100 fw-bold">Запиши се (<span th:text="${slot.effectivePrice}"></span> €)</button>
                     </form>
 
                     <button th:if="${currentUser != null and currentUser.id != slot.course.instructor.id and slot.enrolledUsers.size() >= slot.maxCapacity}" class="btn btn-danger w-100 fw-bold" disabled>Няма свободни места</button>

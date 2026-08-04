@@ -30,17 +30,17 @@
 
                 <td>
                         <span class="badge rounded-pill"
-                              th:classappend="${u.role.name() == 'ADMIN' ? 'bg-danger' : 'bg-success'}"
-                              th:text="${u.role.name()}">
+                              th:classappend="${u.role.name() == 'ADMIN' ? 'bg-danger' : (u.role.name() == 'EMPLOYEE' ? 'bg-warning text-dark' : 'bg-success')}"
+                              th:text="${u.role.name() == 'ADMIN' ? 'Администратор' : (u.role.name() == 'EMPLOYEE' ? 'Служител' : 'Потребител')}">
                         </span>
                 </td>
                 <td class="d-flex gap-2">
                     <form th:action="@{/users/admin/role/{id}(id=${u.id})}" th:method="POST"
                           th:if="${u.role.name() != 'ADMIN'}" class="d-flex align-items-center gap-2">
                         <select name="newRole" class="form-select form-select-sm" style="width: auto;">
-                            <option value="USER" th:selected="${u.role.name() == 'USER'}">USER</option>
-                            <option value="EMPLOYEE" th:selected="${u.role.name() == 'EMPLOYEE'}">EMPLOYEE</option>
-                            <option value="ADMIN" th:selected="${u.role.name() == 'ADMIN'}">ADMIN</option>
+                            <option value="USER" th:selected="${u.role.name() == 'USER'}">Потребител</option>
+                            <option value="EMPLOYEE" th:selected="${u.role.name() == 'EMPLOYEE'}">Служител</option>
+                            <option value="ADMIN" th:selected="${u.role.name() == 'ADMIN'}">Администратор</option>
                         </select>
                         <button type="submit" class="btn btn-primary btn-sm fw-bold">Запази</button>
                     </form>
