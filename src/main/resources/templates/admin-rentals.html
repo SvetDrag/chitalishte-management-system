@@ -166,7 +166,7 @@
                 <td>
                     <span class="badge rounded-pill"
                           th:classappend="${rental.status.name() == 'CONFIRMED' ? 'bg-success' : (rental.status.name() == 'CANCELLED' ? 'bg-danger' : (rental.status.name() == 'COMPLETED' ? 'bg-secondary' : 'bg-warning text-dark'))}"
-                          th:text="${rental.status}">
+                          th:text="${rental.status.name() == 'CONFIRMED' ? 'Потвърдена' : (rental.status.name() == 'CANCELLED' ? 'Отказана' : (rental.status.name() == 'COMPLETED' ? 'Завършена' : 'Изчаква'))}">
                     </span>
                 </td>
                 <td>
