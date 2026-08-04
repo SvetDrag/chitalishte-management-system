@@ -55,7 +55,7 @@ The system is built with strict Role-Based Access Control (RBAC) via **Spring Se
 * **Events & Courses:** Curates the institution's portfolio of activities.
 * **Inventory Management:** Tracks traditional costumes, instruments, and props. Lends items to members and manages returns; overdue loans are flagged automatically.
 * **Hall & Equipment Rentals:** Manages the list of rentable halls and equipment, and processes external rental requests (pending → confirmed/cancelled → completed) — all handled by the separate `rental-service` microservice through a real-time Feign integration.
-* **Financial Module:** Accesses a global real-time financial report showing collected revenue and pending payments, alongside a detailed transaction history.
+* **Financial Module:** Accesses a global real-time financial report showing collected revenue and pending payments, alongside a detailed transaction history — combining both course-attendance fees and confirmed hall/equipment rental income (fetched live from `rental-service` via Feign).
 
 ---
 
@@ -157,7 +157,11 @@ JaCoCo HTML coverage reports are generated at `target/site/jacoco/index.html` in
 
 ### Admin Financial Report
 ![Financial Report](images/finance.png)
-*(Real-time aggregation of revenues and pending payments)*
+*(Real-time aggregation of revenues and pending payments — including confirmed hall/equipment rental income)*
+
+### Hall & Equipment Rentals (rental-service microservice)
+![Hall & Equipment Rentals](images/rentals.png)
+*(Managed through a real service-to-service Feign integration with the separate `rental-service` microservice)*
 
 ---
 
