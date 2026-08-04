@@ -104,4 +104,16 @@ public class InventoryItemServiceImpl implements InventoryItemService {
         return inventoryItemRepository.findAllByStatusAndBorrowedOnBefore(
                 bg.whiteswallow.manager.model.entity.inventory.ItemStatus.BORROWED, threshold);
     }
+
+    @Override
+    public void flagOverdueItems(int overdueAfterDays) {
+        List<InventoryItem> overdueItems = getOverdueItems(overdueAfterDays);
+
+        for (InventoryItem item : overdueItems) {
+            item.setStatus(bg.whiteswallow.manager.model.entity.inventory.ItemStatus.OVERDUE);
+            inventoryItemRepository.save(item);
+            log.warn("Inventory item '{}' flagged OVERDUE - borrowed by '{}' for more than {} days",
+                    item.getName(), item.getBorrowedBy().getUsername(), overdueAfterDays);
+        }
+    }
 }

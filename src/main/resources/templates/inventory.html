@@ -33,8 +33,8 @@
                 <td th:text="${item.itemCondition}"></td>
                 <td>
                         <span class="badge rounded-pill"
-                              th:classappend="${item.status.name() == 'AVAILABLE' ? 'bg-success' : (item.status.name() == 'BORROWED' ? 'bg-secondary' : 'bg-danger')}"
-                              th:text="${item.status.name() == 'AVAILABLE' ? 'Наличен' : (item.status.name() == 'BORROWED' ? 'Зает' : 'В ремонт')}">
+                              th:classappend="${item.status.name() == 'AVAILABLE' ? 'bg-success' : (item.status.name() == 'BORROWED' ? 'bg-secondary' : (item.status.name() == 'OVERDUE' ? 'bg-danger' : 'bg-warning text-dark'))}"
+                              th:text="${item.status.name() == 'AVAILABLE' ? 'Наличен' : (item.status.name() == 'BORROWED' ? 'Зает' : (item.status.name() == 'OVERDUE' ? 'Просрочен' : 'В ремонт'))}">
                         </span>
                 </td>
 
@@ -42,7 +42,7 @@
 
                 <td th:if="${currentUser != null and currentUser.role.name() == 'ADMIN'}">
                     <a th:if="${item.status.name() == 'AVAILABLE'}" th:href="@{/inventory/lend/{id}(id=${item.id})}" class="btn btn-info btn-sm text-white fw-bold">Дай</a>
-                    <form th:if="${item.status.name() == 'BORROWED'}" th:action="@{/inventory/return/{id}(id=${item.id})}" th:method="POST" class="d-inline">
+                    <form th:if="${item.status.name() == 'BORROWED' or item.status.name() == 'OVERDUE'}" th:action="@{/inventory/return/{id}(id=${item.id})}" th:method="POST" class="d-inline">
                         <button type="submit" class="btn btn-success btn-sm fw-bold">Върни</button>
                     </form>
 

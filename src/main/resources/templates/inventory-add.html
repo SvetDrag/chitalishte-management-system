@@ -30,7 +30,7 @@
                             <label class="form-label fw-bold">Статус</label>
                             <select th:field="*{status}" class="form-select" th:classappend="${#fields.hasErrors('status')} ? 'is-invalid'">
                                 <option value="" disabled selected>Изберете статус...</option>
-                                <option th:each="s : ${itemStatuses}" th:value="${s}" th:text="${s.name() == 'AVAILABLE' ? 'Наличен' : (s.name() == 'BORROWED' ? 'Зает' : 'В ремонт')}"></option>
+                                <option th:each="s : ${itemStatuses}" th:value="${s}" th:text="${s.name() == 'AVAILABLE' ? 'Наличен' : (s.name() == 'BORROWED' ? 'Зает' : (s.name() == 'OVERDUE' ? 'Просрочен' : 'В ремонт'))}"></option>
                             </select>
                             <div class="invalid-feedback" th:errors="*{status}"></div>
                         </div>
