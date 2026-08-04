@@ -222,3 +222,11 @@ This project is a solid foundation that I plan to expand. Upcoming features incl
 ![Schedule Employee](images/schedule-employee.png)
 
 ![User Dashboard](images/user-dashboard.png)
+
+![User Profile](images/profile.png)
+
+![Admin User Management](images/admin-users.png)
+
+![Hall & Equipment Rentals (rental-service via Feign)](images/rentals.png)
+
+![Hall & Equipment Rentals - request list](images/rentals-2.png)
