@@ -56,7 +56,7 @@ public class RentalRequest {
     private String purpose;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "VARCHAR(20)")
     private RentalStatus status;
 
     @Column(nullable = false)
