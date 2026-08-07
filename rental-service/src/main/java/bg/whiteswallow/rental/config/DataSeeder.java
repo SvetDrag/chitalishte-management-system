@@ -54,6 +54,7 @@ public class DataSeeder implements ApplicationRunner {
         rentalRequestRepository.deleteAll();
         equipmentItemRepository.deleteAll();
         hallRepository.deleteAll();
+        hallRepository.flush();
     }
 
     private List<Hall> seedHalls() {

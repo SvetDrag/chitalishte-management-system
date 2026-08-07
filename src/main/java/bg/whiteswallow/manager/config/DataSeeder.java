@@ -85,6 +85,7 @@ public class DataSeeder implements ApplicationRunner {
         eventRepository.deleteAll();
         inventoryItemRepository.deleteAll();
         userRepository.deleteAll();
+        userRepository.flush();
     }
 
     private List<User> seedUsers() {
