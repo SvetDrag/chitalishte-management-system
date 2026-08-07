@@ -59,12 +59,48 @@
 
     <div th:if="${currentUser != null and currentUser.role.name() == 'EMPLOYEE'}">
         <h3 class="mb-4 text-info">Работно табло - Преподавател</h3>
+
+        <div class="row mb-4" th:if="${instructorDashboard != null}">
+            <div class="col-6 col-md-3 mb-3">
+                <div class="card text-center shadow-sm h-100">
+                    <div class="card-body">
+                        <div class="fs-3 fw-bold text-info" th:text="${instructorDashboard.myCoursesCount}"></div>
+                        <div class="text-muted small">Мои школи</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3 mb-3">
+                <div class="card text-center shadow-sm h-100">
+                    <div class="card-body">
+                        <div class="fs-3 fw-bold text-info" th:text="${instructorDashboard.upcomingSlotsCount}"></div>
+                        <div class="text-muted small">Предстоящи часове</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3 mb-3">
+                <div class="card text-center shadow-sm h-100">
+                    <div class="card-body">
+                        <div class="fs-3 fw-bold text-info" th:text="${instructorDashboard.myStudentsCount}"></div>
+                        <div class="text-muted small">Ученици</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3 mb-3">
+                <div class="card text-center shadow-sm h-100">
+                    <div class="card-body">
+                        <div class="fs-3 fw-bold text-danger" th:text="${instructorDashboard.pendingAmount} + ' €'"></div>
+                        <div class="text-muted small">Неплатени такси</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="row">
             <div class="col-md-6 mb-3">
                 <div class="card bg-info text-white shadow-sm">
                     <div class="card-body">
                         <h5 class="card-title fw-bold">Управление на графика</h5>
-                        <p>Имате общо <b th:text="${mySchedule.size()}"></b> предстоящи заявени часове в системата.</p>
+                        <p>Имате общо <b th:text="${mySchedule.size()}"></b> заявени часове в системата.</p>
                         <a href="/employee/schedule" class="btn btn-light fw-bold">Отвори детайлния график</a>
                     </div>
                 </div>
@@ -74,6 +110,42 @@
 
     <div th:if="${currentUser != null and currentUser.role.name() == 'ADMIN'}">
         <h3 class="mb-4 text-warning">Контролен център (Админ)</h3>
+
+        <div class="row mb-4" th:if="${adminDashboard != null}">
+            <div class="col-6 col-md-3 mb-3">
+                <div class="card text-center shadow-sm h-100">
+                    <div class="card-body">
+                        <div class="fs-3 fw-bold text-warning" th:text="${adminDashboard.totalUsers}"></div>
+                        <div class="text-muted small">Регистрирани потребители</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3 mb-3">
+                <div class="card text-center shadow-sm h-100">
+                    <div class="card-body">
+                        <div class="fs-3 fw-bold text-warning" th:text="${adminDashboard.totalCourses}"></div>
+                        <div class="text-muted small">Школи</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3 mb-3">
+                <div class="card text-center shadow-sm h-100">
+                    <div class="card-body">
+                        <div class="fs-3 fw-bold text-warning" th:text="${adminDashboard.upcomingEventsCount}"></div>
+                        <div class="text-muted small">Предстоящи събития</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3 mb-3">
+                <div class="card text-center shadow-sm h-100">
+                    <div class="card-body">
+                        <div class="fs-3 fw-bold text-success" th:text="${adminDashboard.totalRevenue} + ' €'"></div>
+                        <div class="text-muted small">Постъпили приходи</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="row">
             <div class="col-md-4 mb-4">
                 <div class="card shadow-sm border-warning h-100">

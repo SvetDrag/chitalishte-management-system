@@ -94,6 +94,47 @@
     </div>
 </div>
 
+<div class="container mt-5">
+    <div class="row g-4">
+        <div class="col-lg-6">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h3 class="fw-bold mb-0">Предстоящи събития</h3>
+                <a href="/events" class="btn btn-sm btn-outline-primary fw-bold">Виж всички</a>
+            </div>
+            <div th:if="${publicDashboard.upcomingEvents.isEmpty()}" class="alert alert-light border text-muted">
+                В момента няма обявени предстоящи събития.
+            </div>
+            <div class="card shadow-sm mb-3" th:each="event : ${publicDashboard.upcomingEvents}">
+                <div class="card-body">
+                    <h5 class="card-title fw-bold text-primary" th:text="${event.title}">Заглавие</h5>
+                    <p class="text-muted mb-1">
+                        📅 <span th:text="${#temporals.format(event.eventDate, 'dd.MM.yyyy HH:mm')}"></span>
+                        &nbsp;·&nbsp; 📍 <span th:text="${event.location}"></span>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h3 class="fw-bold mb-0">Нашите школи</h3>
+                <a href="/courses" class="btn btn-sm btn-outline-success fw-bold">Виж всички</a>
+            </div>
+            <div th:if="${publicDashboard.activeCourses.isEmpty()}" class="alert alert-light border text-muted">
+                В момента няма обявени школи.
+            </div>
+            <div class="card shadow-sm mb-3" th:each="course : ${publicDashboard.activeCourses}">
+                <div class="card-body">
+                    <h5 class="card-title fw-bold text-success" th:text="${course.name}">Име на школа</h5>
+                    <p class="text-muted mb-0" th:if="${course.instructor != null}">
+                        Води: <span th:text="${course.instructor.firstName + ' ' + course.instructor.lastName}"></span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="container text-center mt-5 mb-4 opacity-50">
     <small>&copy; 2026 НЧ "Бялата лястовица - 2018". Всички права запазени.</small>
 </div>

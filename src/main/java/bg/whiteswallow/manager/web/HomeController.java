@@ -6,6 +6,7 @@ import bg.whiteswallow.manager.rental.dto.RentalRequestResponseDTO;
 import bg.whiteswallow.manager.rental.dto.RentalStatus;
 import bg.whiteswallow.manager.rental.service.RentalIntegrationService;
 import bg.whiteswallow.manager.security.UserPrincipal;
+import bg.whiteswallow.manager.service.DashboardService;
 import bg.whiteswallow.manager.service.LessonAttendanceService;
 import bg.whiteswallow.manager.service.LessonSlotService;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -23,19 +24,22 @@ public class HomeController {
     private final LessonSlotService lessonSlotService;
     private final LessonAttendanceService lessonAttendanceService;
     private final RentalIntegrationService rentalIntegrationService;
+    private final DashboardService dashboardService;
 
     public HomeController(LessonSlotService lessonSlotService, LessonAttendanceService lessonAttendanceService,
-                           RentalIntegrationService rentalIntegrationService) {
+                           RentalIntegrationService rentalIntegrationService, DashboardService dashboardService) {
         this.lessonSlotService = lessonSlotService;
         this.lessonAttendanceService = lessonAttendanceService;
         this.rentalIntegrationService = rentalIntegrationService;
+        this.dashboardService = dashboardService;
     }
 
     @GetMapping("/")
-    public String index(@AuthenticationPrincipal UserPrincipal principal) {
+    public String index(@AuthenticationPrincipal UserPrincipal principal, Model model) {
         if (principal != null) {
             return "redirect:/home";
         }
+        model.addAttribute("publicDashboard", dashboardService.getPublicDashboard());
         return "index";
     }
 
@@ -47,6 +51,9 @@ public class HomeController {
             model.addAttribute("myLessons", lessonSlotService.getUserUpcomingLessons(principal.getId()));
         } else if (role == UserRole.EMPLOYEE) {
             model.addAttribute("mySchedule", lessonSlotService.getInstructorSchedule(principal.getId()));
+            model.addAttribute("instructorDashboard", dashboardService.getInstructorDashboard(principal.getId()));
+        } else if (role == UserRole.ADMIN) {
+            model.addAttribute("adminDashboard", dashboardService.getAdminDashboard());
         }
 
         return "home";
