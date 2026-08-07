@@ -132,6 +132,12 @@ DB_PASSWORD=your_password docker compose up --build
 6. Open your browser at `http://localhost:8080`.
 7. **Getting Started:** Register your first account *(it automatically becomes the Administrator)*. Create a course, add a hall, register a second account, and promote them to an Instructor!
 
+### 🌱 Loading demo data
+
+Both applications ship an optional demo-data seeder, disabled by default (each app starts with an empty database). To load a ready-made dataset — demo accounts for every role, courses, events, inventory, halls, equipment, and rental requests — set `app.seed.enabled=true` in each app's `application-local.properties` and restart. Full contents (including the demo login credentials) are documented in [`SEED_DATA.txt`](SEED_DATA.txt).
+
+> ⚠️ Enabling the seeder wipes any existing data in that database — use it only on a fresh local/demo database.
+
 ### Running the tests
 
 ```bash

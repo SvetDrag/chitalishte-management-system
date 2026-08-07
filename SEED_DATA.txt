@@ -1,0 +1,119 @@
+DEMO / SEED DATA — Chitalishte Management System
+==================================================
+
+Both applications ship an optional demo-data seeder (DataSeeder), disabled
+by default. When enabled, each app wipes its own database on startup and
+inserts the fixed dataset described below.
+
+HOW TO ENABLE
+-------------
+1. Add this line to the app's local properties file:
+
+       app.seed.enabled=true
+
+   Main app        -> src/main/resources/application-local.properties
+   rental-service  -> rental-service/src/main/resources/application-local.properties
+
+   (Alternatively, without editing files: run with
+   -Dapp.seed.enabled=true, or set the environment variable
+   APP_SEED_ENABLED=true, or add it under the "environment:" section of
+   the relevant service in docker-compose.yml.)
+
+2. Start (or restart) the application. The seeder runs once on startup
+   and logs "Seeding ... database with demo data..." / "... seeding
+   complete." in the console.
+
+WARNING: the seeder DELETES all existing rows in its tables before
+inserting the demo data. Do not enable it against a database whose data
+you want to keep. It is meant for a fresh local/demo database only.
+
+==================================================
+MAIN APPLICATION (chitalishte_management_system)
+==================================================
+
+Accounts (username / password / role / name):
+
+  - admin              / Admin123!  / ADMIN    / Админ Админов
+  - petar.ivanov        / Parola123! / EMPLOYEE / Петър Иванов
+  - maria.georgieva     / Parola123! / EMPLOYEE / Мария Георгиева
+  - ivan.petrov         / Parola123! / EMPLOYEE / Иван Петров
+  - georgi.dimitrov     / Parola123! / USER     / Георги Димитров
+  - elena.stoyanova     / Parola123! / USER     / Елена Стоянова
+  - stefan.nikolov      / Parola123! / USER     / Стефан Николов
+  - victoria.hristova   / Parola123! / USER     / Виктория Христова
+  - kristian.angelov    / Parola123! / USER     / Кристиан Ангелов
+  - teodora.vasileva    / Parola123! / USER     / Теодора Василева
+
+Courses (each taught by one of the three EMPLOYEE accounts above):
+
+  - Народни танци      — group: 15.00 лв/час — instructor: Петър Иванов
+  - Пиано              — individual: 25.00 лв/час — instructor: Мария Георгиева
+  - Вокална група       — group: 10.00 лв/час — instructor: Мария Георгиева
+  - Класическа китара    — group: 12.00 / individual: 20.00 лв/час — instructor: Иван Петров
+
+Lesson slots & attendance: each course gets 4 sessions/month for 4 months
+(two months ago, last month, this month, next month) — 16 slots per
+course, 64 total. Each slot has 2-4 of the 6 USER accounts enrolled
+(rotating). Every slot in the past has attendance records for its
+enrolled users, with roughly 2/3 marked "paid" and 1/3 "unpaid" — good
+for testing the finance report and the payment-toggle feature. The
+single most recent past slot is left with one unmarked attendee, so
+there's always at least one open item to demo marking attendance live.
+
+Events (cultural calendar):
+
+  - Патронен празник на читалището    (2 months ago) — Голяма зала
+  - Изложба на детското ателие         (1 month ago)  — Фоайе
+  - Лятна вечер на народните танци      (1 month ago)  — Летен театър
+  - Ден на отворените врати              (this month)   — Голяма зала
+  - Есенен благотворителен концерт       (next month)   — Голяма зала
+
+Inventory items:
+
+  - Акустична китара Yamaha       — BORROWED (by georgi.dimitrov, 20 days ago)
+  - Народна носия - женска         — BORROWED (by elena.stoyanova, 5 days ago)
+  - Народна носия - мъжка          — AVAILABLE
+  - Електронен синтезатор Casio    — AVAILABLE
+  - Комплект барабани              — MAINTENANCE
+  - Микрофон Shure SM58            — BORROWED (by stefan.nikolov, 45 days ago —
+    past the 14-day overdue threshold, so the fixed-delay scheduler will
+    flag it OVERDUE on its next run; good for demoing that feature)
+  - Мек преносим пулт за озвучаване  — AVAILABLE
+
+==================================================
+RENTAL-SERVICE (chitalishte_rental_db)
+==================================================
+
+No login accounts — this microservice has no end users of its own, only
+the main app's admin panel talks to it (over Feign, authenticated with
+an API key — see README.md).
+
+Halls:
+
+  - Голяма зала       — capacity 200 — main concert/event hall
+  - Малка зала         — capacity 50  — meetings, seminars, smaller events
+  - Конферентна зала    — capacity 30  — conferences, has projector & sound
+
+Equipment:
+
+  - Проектор Epson              — 40.00 лв/rental  — available
+  - Озвучителна система          — 120.00 лв/rental — available
+  - Сценично осветление          — 90.00 лв/rental  — available
+  - Комплект столове (100 бр.)    — 60.00 лв/rental  — available
+  - Безжични микрофони (2 бр.)     — 35.00 лв/rental  — NOT available (currently out)
+
+Rental requests (12 total, spanning 2 months ago through next month, so
+the admin panel shows a realistic mix of every status):
+
+  - Сдружение "Извор" — Годишен благотворителен бал — COMPLETED — 450.00 лв
+  - Иван Колев — Рожден ден — COMPLETED — 180.00 лв
+  - ТП "Знание" ЕООД — Бизнес семинар — CANCELLED — 160.00 лв
+  - Мария Тодорова — Сватбено тържество — COMPLETED — 520.00 лв
+  - НЧ "Пробуда" - партньорско събитие — Съвместен концерт — COMPLETED — 300.00 лв
+  - Стефан Русев — Детски рожден ден — CANCELLED — 120.00 лв
+  - Фирма "Хоризонт" АД — Годишна конференция — COMPLETED — 250.00 лв
+  - Военно-патриотичен клуб "Родина" — Тържествено събрание — CONFIRMED — 220.00 лв
+  - Елена Петкова — Абитуриентски бал — PENDING — 480.00 лв
+  - Клуб по танци "Ритъм" — Отчетен танцов спектакъл — CONFIRMED — 260.00 лв
+  - Георги Николов — Кръщене — PENDING — 190.00 лв
+  - Сдружение на пенсионера "Заедно" — Информационна среща — PENDING — 100.00 лв
