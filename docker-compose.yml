@@ -38,6 +38,7 @@ services:
       DB_USERNAME: root
       DB_PASSWORD: ${DB_PASSWORD:-rootpass}
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql-rental:3306/chitalishte_rental_db?createDatabaseIfNotExist=true
+      RENTAL_SERVICE_API_KEY: ${RENTAL_SERVICE_API_KEY:-ee6ca294f728474a9fa2c93ddb297eddcda861e4524a4edd99455d9fa1415926}
     ports:
       - "8081:8081"
 
@@ -53,6 +54,7 @@ services:
       DB_PASSWORD: ${DB_PASSWORD:-rootpass}
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql-main:3306/chitalishte_management_system?createDatabaseIfNotExist=true
       RENTAL_SERVICE_URL: http://rental-service:8081
+      RENTAL_SERVICE_API_KEY: ${RENTAL_SERVICE_API_KEY:-ee6ca294f728474a9fa2c93ddb297eddcda861e4524a4edd99455d9fa1415926}
     ports:
       - "8080:8080"
 

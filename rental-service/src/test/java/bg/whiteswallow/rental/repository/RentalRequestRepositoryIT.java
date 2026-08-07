@@ -6,6 +6,11 @@ import bg.whiteswallow.rental.entity.RentalStatus;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.math.BigDecimal;
@@ -16,6 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
 @ActiveProfiles("test")
+@Import(RentalRequestRepositoryIT.TestCacheConfig.class)
 class RentalRequestRepositoryIT {
 
     @Autowired
@@ -101,5 +107,14 @@ class RentalRequestRepositoryIT {
 
         assertThat(expired).hasSize(1);
         assertThat(expired.get(0).getEndDateTime()).isBefore(LocalDateTime.now());
+    }
+
+    @TestConfiguration
+    static class TestCacheConfig {
+
+        @Bean
+        CacheManager cacheManager() {
+            return new ConcurrentMapCacheManager();
+        }
     }
 }

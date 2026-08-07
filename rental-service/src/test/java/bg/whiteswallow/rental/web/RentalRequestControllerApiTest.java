@@ -63,6 +63,11 @@ class RentalRequestControllerApiTest {
 
     @BeforeEach
     void setUp() {
+        var interceptors = restTemplate.getRestTemplate().getInterceptors();
+        if (interceptors.stream().noneMatch(ApiKeyRequestInterceptor.class::isInstance)) {
+            interceptors.add(new ApiKeyRequestInterceptor());
+        }
+
         HallCreateDTO hallDTO = new HallCreateDTO();
         hallDTO.setName("Голяма зала");
         hallDTO.setCapacity(150);

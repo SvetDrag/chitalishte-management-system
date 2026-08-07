@@ -5,6 +5,11 @@ import bg.whiteswallow.manager.model.entity.user.UserRole;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.cache.CacheManager;
+import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDateTime;
@@ -15,6 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
 @ActiveProfiles("test")
+@Import(UserRepositoryIT.TestCacheConfig.class)
 class UserRepositoryIT {
 
     @Autowired
@@ -79,5 +85,14 @@ class UserRepositoryIT {
         User saved = save("newuser", "newuser@example.com", UserRole.USER);
 
         assertThat(saved.getId()).isNotNull();
+    }
+
+    @TestConfiguration
+    static class TestCacheConfig {
+
+        @Bean
+        CacheManager cacheManager() {
+            return new ConcurrentMapCacheManager();
+        }
     }
 }

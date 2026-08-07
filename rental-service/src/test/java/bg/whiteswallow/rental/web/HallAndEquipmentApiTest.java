@@ -4,6 +4,7 @@ import bg.whiteswallow.rental.dto.EquipmentItemCreateDTO;
 import bg.whiteswallow.rental.dto.EquipmentItemResponseDTO;
 import bg.whiteswallow.rental.dto.HallCreateDTO;
 import bg.whiteswallow.rental.dto.HallResponseDTO;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.resttestclient.TestRestTemplate;
@@ -33,6 +34,14 @@ class HallAndEquipmentApiTest {
 
     private String url(String path) {
         return "http://localhost:" + port + path;
+    }
+
+    @BeforeEach
+    void addApiKeyHeader() {
+        var interceptors = restTemplate.getRestTemplate().getInterceptors();
+        if (interceptors.stream().noneMatch(ApiKeyRequestInterceptor.class::isInstance)) {
+            interceptors.add(new ApiKeyRequestInterceptor());
+        }
     }
 
     private HallCreateDTO validHallDTO() {
