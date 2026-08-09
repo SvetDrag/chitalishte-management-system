@@ -157,9 +157,13 @@ JaCoCo HTML coverage reports are generated at `target/site/jacoco/index.html` in
 ![Landing Page](images/home-public.png)
 *(Designed to attract new members and showcase activities)*
 
-### Instructor Dashboard
-![Instructor Dashboard](images/admin-dashboard.png)
-*(Managing attendees, marking attendance, and tracking payments)*
+### Admin Dashboard
+![Admin Dashboard](images/admin-dashboard.png)
+*(At-a-glance stats — users, courses, upcoming events, revenue — plus quick access to every admin area)*
+
+### Public Homepage Preview
+![Homepage Events & Courses Preview](images/home-preview.png)
+*(Guests see a live preview of upcoming events and active courses right on the landing page)*
 
 ### Admin Financial Report
 ![Financial Report](images/finance.png)
