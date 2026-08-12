@@ -8,6 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 @ControllerAdvice
@@ -28,6 +29,15 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public String handleNoResourceFound(NoResourceFoundException ex, Model model) {
         log.warn("No resource found for path: {}", ex.getResourcePath());
+        model.addAttribute("status", HttpStatus.NOT_FOUND.value());
+        model.addAttribute("message", "Страницата не е намерена.");
+        return "error";
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public String handleTypeMismatch(MethodArgumentTypeMismatchException ex, Model model) {
+        log.warn("Invalid path/request parameter '{}': {}", ex.getName(), ex.getMessage());
         model.addAttribute("status", HttpStatus.NOT_FOUND.value());
         model.addAttribute("message", "Страницата не е намерена.");
         return "error";
