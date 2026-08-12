@@ -1,5 +1,7 @@
 package bg.whiteswallow.manager.service;
 
+import bg.whiteswallow.manager.exception.DuplicateUsernameException;
+import bg.whiteswallow.manager.exception.PasswordMismatchException;
 import bg.whiteswallow.manager.exception.ResourceNotFoundException;
 import bg.whiteswallow.manager.model.dto.user.UserProfileEditDTO;
 import bg.whiteswallow.manager.model.dto.user.UserRegisterDTO;
@@ -52,22 +54,20 @@ class UserServiceImplTest {
     }
 
     @Test
-    void register_returnsFalse_whenPasswordsDoNotMatch() {
+    void register_throwsPasswordMismatch_whenPasswordsDoNotMatch() {
         registerDTO.setConfirmPassword("different");
 
-        boolean result = userService.register(registerDTO);
-
-        assertThat(result).isFalse();
+        assertThatThrownBy(() -> userService.register(registerDTO))
+                .isInstanceOf(PasswordMismatchException.class);
         verify(userRepository, never()).save(any());
     }
 
     @Test
-    void register_returnsFalse_whenUsernameTaken() {
+    void register_throwsDuplicateUsername_whenUsernameTaken() {
         when(userRepository.findByUsername("ivan123")).thenReturn(Optional.of(new User()));
 
-        boolean result = userService.register(registerDTO);
-
-        assertThat(result).isFalse();
+        assertThatThrownBy(() -> userService.register(registerDTO))
+                .isInstanceOf(DuplicateUsernameException.class);
         verify(userRepository, never()).save(any());
     }
 
@@ -77,9 +77,8 @@ class UserServiceImplTest {
         when(userRepository.count()).thenReturn(0L);
         when(passwordEncoder.encode("pass1234")).thenReturn("hashed-password");
 
-        boolean result = userService.register(registerDTO);
+        userService.register(registerDTO);
 
-        assertThat(result).isTrue();
         verify(userRepository).save(argThatUserRole(UserRole.ADMIN));
     }
 

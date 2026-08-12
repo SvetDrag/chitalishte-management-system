@@ -1,5 +1,7 @@
 package bg.whiteswallow.manager.web;
 
+import bg.whiteswallow.manager.exception.DuplicateUsernameException;
+import bg.whiteswallow.manager.exception.PasswordMismatchException;
 import bg.whiteswallow.manager.model.dto.user.UserLoginDTO;
 import bg.whiteswallow.manager.model.dto.user.UserProfileEditDTO;
 import bg.whiteswallow.manager.model.dto.user.UserRegisterDTO;
@@ -49,13 +51,20 @@ public class UserController {
                                   BindingResult bindingResult,
                                   RedirectAttributes redirectAttributes) {
 
-        if (bindingResult.hasErrors() || !userService.register(userRegisterDTO)) {
-            redirectAttributes.addFlashAttribute("userRegisterDTO", userRegisterDTO);
-            redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.userRegisterDTO", bindingResult);
-            return "redirect:/users/register";
+        if (!bindingResult.hasErrors()) {
+            try {
+                userService.register(userRegisterDTO);
+                return "redirect:/users/login";
+            } catch (DuplicateUsernameException e) {
+                bindingResult.rejectValue("username", "username.duplicate", e.getMessage());
+            } catch (PasswordMismatchException e) {
+                bindingResult.rejectValue("confirmPassword", "password.mismatch", e.getMessage());
+            }
         }
 
-        return "redirect:/users/login";
+        redirectAttributes.addFlashAttribute("userRegisterDTO", userRegisterDTO);
+        redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.userRegisterDTO", bindingResult);
+        return "redirect:/users/register";
     }
 
     @GetMapping("/login")

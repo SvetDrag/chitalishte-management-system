@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.UUID;
 
 public interface UserService {
-    boolean register(UserRegisterDTO userRegisterDTO);
+    void register(UserRegisterDTO userRegisterDTO);
     List<User> getAllUsers();
     void deleteUser(UUID id);
     void changeUserRole(UUID id, UserRole newRole);

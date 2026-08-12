@@ -4,6 +4,8 @@ import bg.whiteswallow.manager.model.dto.user.UserProfileEditDTO;
 import bg.whiteswallow.manager.model.dto.user.UserRegisterDTO;
 import bg.whiteswallow.manager.model.entity.user.User;
 import bg.whiteswallow.manager.model.entity.user.UserRole;
+import bg.whiteswallow.manager.exception.DuplicateUsernameException;
+import bg.whiteswallow.manager.exception.PasswordMismatchException;
 import bg.whiteswallow.manager.exception.ResourceNotFoundException;
 import bg.whiteswallow.manager.repository.UserRepository;
 import bg.whiteswallow.manager.service.UserService;
@@ -31,14 +33,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean register(UserRegisterDTO userRegisterDTO) {
+    public void register(UserRegisterDTO userRegisterDTO) {
         if (!userRegisterDTO.getPassword().equals(userRegisterDTO.getConfirmPassword())) {
-            return false;
+            throw new PasswordMismatchException("Паролите не съвпадат!");
         }
 
         Optional<User> existingUser = userRepository.findByUsername(userRegisterDTO.getUsername());
         if (existingUser.isPresent()) {
-            return false;
+            throw new DuplicateUsernameException("Потребителското име е заето!");
         }
 
         User user = User.builder()
@@ -55,7 +57,6 @@ public class UserServiceImpl implements UserService {
 
         userRepository.save(user);
         log.info("Registered new user '{}' with role {}", user.getUsername(), user.getRole());
-        return true;
     }
 
     @Override
