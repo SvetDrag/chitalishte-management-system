@@ -1,5 +1,6 @@
 package bg.whiteswallow.manager.config;
 
+import bg.whiteswallow.manager.security.NotFoundAwareLoginEntryPoint;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -7,6 +8,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 @Configuration
 @EnableWebSecurity
@@ -18,11 +20,11 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, RequestMappingHandlerMapping handlerMapping) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/", "/users/register", "/users/login", "/access-denied",
+                                "/", "/users/register", "/users/login", "/access-denied", "/error",
                                 "/css/**", "/js/**", "/images/**", "/webjars/**"
                         ).permitAll()
                         .requestMatchers("/events/add", "/events/edit/**", "/events/delete/**").hasRole("ADMIN")
@@ -46,7 +48,10 @@ public class SecurityConfig {
                         .logoutUrl("/users/logout")
                         .logoutSuccessUrl("/")
                 )
-                .exceptionHandling(ex -> ex.accessDeniedPage("/access-denied"));
+                .exceptionHandling(ex -> ex
+                        .accessDeniedPage("/access-denied")
+                        .authenticationEntryPoint(new NotFoundAwareLoginEntryPoint(handlerMapping, "/users/login"))
+                );
 
         return http.build();
     }
